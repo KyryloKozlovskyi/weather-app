@@ -1,0 +1,60 @@
+.current-weather-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+ion-card {
+  border-radius: 16px;
+  margin: 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.location-name {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.current-datetime {
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.weather-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.weather-icon {
+  text-align: center;
+
+  img {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+.temperature {
+  text-align: center;
+
+  .temp-value {
+    font-size: 4rem;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+.weather-description {
+  text-align: center;
+  font-size: 1.4rem;
+  margin: 0;
+  text-transform: capitalize;
+}
