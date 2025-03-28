@@ -4,12 +4,14 @@
   flex-direction: column;
   height: 100%;
   justify-content: center;
+  background: linear-gradient(135deg, #e6f7ff, #f0f8ff);
 }
 
 ion-card {
   border-radius: 16px;
   margin: 0;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.7); // semi-transparent white background
 }
 
 .location-name {
