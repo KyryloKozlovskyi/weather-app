@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,14 @@ export class GeocodingService {
   getGeocoding(city: string): Observable<any> {
     let apiKey = 'c213bf7641522d502751e12a087b3d5d'; // API key
     let apiCall = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`; // API call
-    return this.http.get(apiCall); // Return the API call response as an observable
+
+    console.log(`[GeocodingService] Making API call to: ${apiCall}`);
+
+    return this.http.get(apiCall).pipe(
+      tap(
+        (response) => console.log('[GeocodingService] API response:', response),
+        (error) => console.error('[GeocodingService] API error:', error)
+      )
+    ); // Return the API call response as an observable
   }
 }
