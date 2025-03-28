@@ -1,125 +1,144 @@
 <!-- Header -->
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Search </ion-title>
+    <ion-title>Weather</ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
-  <!-- Search Bar -->
-  <ion-searchbar
-    show-clear-button="always"
-    animated="true"
-    placeholder="Enter the City"
-    (keypress)="handleInput($event)"
-  ></ion-searchbar>
-  <!-- Refresh -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <!-- Current Detailed Weahter Grid -->
-  <div *ngIf="showContent">
-    <!-- City Row -->
-    <div class="main">
-      <span class="city" *ngIf="geoRevResp[0]">{{ geoRevResp[0].name }}</span>
-    </div>
+
+  <!-- Search Container -->
+  <div class="search-container">
+    <ion-button class="location-button" (click)="getCurrentLocation()">
+      <ion-icon slot="icon-only" name="location-outline"></ion-icon>
+    </ion-button>
+    <ion-searchbar
+      placeholder="Search city..."
+      (keypress)="handleInput($event)"
+      enterkeyhint="search"
+    ></ion-searchbar>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="ion-text-center ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p class="ion-text-center ion-color-light">Getting weather data...</p>
+  </div>
+
+  <!-- Weather Content -->
+  <div *ngIf="showContent && !isLoading">
+    <!-- Main Weather Display -->
     <ion-grid class="tempgrid">
-      <ion-row>
-        <span class="date" *ngIf="resp.current"
-          >{{ resp.current.dt | date}}</span
-        >
-      </ion-row>
-      <!-- Temperature Row -->
-      <ion-row>
-        <span class="temperature" *ngIf="resp.current"
-          >{{ resp.current.temp | number: '1.0-0' }}°/{{ resp.daily[0].temp.min
-          | number: '1.0-0' }}°</span
-        >
-        <!-- Icon -->
+      <ion-row class="main">
+        <div class="city" *ngIf="geoRevResp[0]">{{ geoRevResp[0].name }}</div>
+        <div class="date" *ngIf="resp.current">
+          {{ resp.current.dt * 1000 | date:'string' }}
+        </div>
+        <div class="temperature" *ngIf="resp.current">
+          {{ resp.current.temp | number: '1.0-0' }}°
+        </div>
         <div class="icon" *ngIf="resp.current">
           <img
-            src="http://openweathermap.org/img/wn/{{ resp.current.weather[0].icon }}@2x.png"
-            alt="API Image"
+            src="http://openweathermap.org/img/wn/{{ resp.current.weather[0].icon }}@4x.png"
+            alt="Weather Icon"
+            width="150"
           />
         </div>
-      </ion-row>
-      <!-- Description Row -->
-      <ion-row>
-        <span class="description" *ngIf="resp.current"
-          >{{ resp.current.weather[0].main }}</span
-        >
+        <div class="description" *ngIf="resp.current">
+          {{ resp.current.weather[0].main }}
+        </div>
       </ion-row>
     </ion-grid>
+
     <!-- Weather Conditions Grid -->
+    <div class="current">Current conditions</div>
     <ion-grid>
-      <!-- Wind -->
-      <span class="current">Current conditions</span>
       <ion-row>
-        <ion-col class="conditions">
-          <span class="detailed">
-            Wind
-            <ion-icon name="compass-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.wind_speed }} km/h</span
-          >
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="compass-outline"></ion-icon>
+              Wind
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.wind_speed }} km/h
+            </div>
+          </div>
         </ion-col>
-        <!-- Rainfall -->
-        <ion-col class="conditions">
-          <span class="detailed">
-            Rainfall
-            <ion-icon name="water-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.rain | rain}} mm</span
-          >
-        </ion-col>
-        <!-- Pressure -->
-        <ion-col class="conditions">
-          <span class="detailed">
-            Pressure
-            <ion-icon name="contract-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.pressure }} hPa</span
-          >
+
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="water-outline"></ion-icon>
+              Rainfall
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.rain | rain}} mm
+            </div>
+          </div>
         </ion-col>
       </ion-row>
+
       <ion-row>
-        <!-- Wind Direction -->
-        <ion-col class="conditions">
-          <span class="detailed">
-            Direction
-            <ion-icon name="compass-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.wind_deg | wind }}</span
-          >
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="compass-outline"></ion-icon>
+              Direction
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.wind_deg | wind }}
+            </div>
+          </div>
         </ion-col>
-        <!-- Humidity -->
-        <ion-col class="conditions">
-          <span class="detailed">
-            Humidity
-            <ion-icon name="water-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.humidity }} %</span
-          >
+
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="water-outline"></ion-icon>
+              Humidity
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.humidity }}%
+            </div>
+          </div>
         </ion-col>
-        <!-- Cloudiness -->
-        <ion-col class="conditions">
-          <span class="detailed">
-            Cloudiness
-            <ion-icon name="cloud-outline"></ion-icon>
-          </span>
-          <span class="detailed" *ngIf="resp.current"
-            >{{ resp.current.clouds }} %</span
-          >
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="contract-outline"></ion-icon>
+              Pressure
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.pressure }} hPa
+            </div>
+          </div>
+        </ion-col>
+
+        <ion-col size="6">
+          <div class="conditions">
+            <div class="detailed">
+              <ion-icon name="cloud-outline"></ion-icon>
+              Cloudiness
+            </div>
+            <div class="detailed" *ngIf="resp.current">
+              {{ resp.current.clouds }}%
+            </div>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <!-- Forecast Grid -->
-    <span class="forecastdivider">Forecast</span>
+
+    <!-- Forecast Section -->
+    <div class="forecastdivider">7-day forecast</div>
     <ion-grid class="forecast">
+      <!-- Keep the existing forecast section structure -->
       <ion-row>
         <ion-col class="day" *ngIf="resp.daily"
           >{{resp.daily[0].dt | day}}</ion-col

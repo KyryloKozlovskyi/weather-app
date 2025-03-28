@@ -6,6 +6,8 @@ import {
   IonContent,
   IonRefresher,
   IonRefresherContent,
+  IonButton,
+  IonSpinner,
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { IonSearchbar } from '@ionic/angular/standalone';
@@ -24,10 +26,12 @@ import {
   waterOutline,
   contractOutline,
   cloudOutline,
+  locationOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
-import { AlertController } from '@ionic/angular/standalone';
+import { AlertController, LoadingController } from '@ionic/angular/standalone';
+import { LocationService } from '../services/location.service';
 
 @Component({
   selector: 'app-tab2',
@@ -54,6 +58,8 @@ import { AlertController } from '@ionic/angular/standalone';
     WindPipe,
     DayPipe,
     RainPipe,
+    IonButton,
+    IonSpinner,
   ],
 })
 export class Tab2Page {
@@ -64,14 +70,93 @@ export class Tab2Page {
   public lat: any; // Latitude
   public lon: any; // Longitude
   public showContent: boolean = false; // Show content flag
+  public isLoading: boolean = false;
+
   // Injecting the services
   constructor(
     private geocodingService: GeocodingService,
     private weatherService: WeatherService,
     private reverseWeatherService: ReverseGeocodingService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private locationService: LocationService,
+    private loadingController: LoadingController
   ) {
-    addIcons({ compassOutline, waterOutline, contractOutline, cloudOutline }); // Add icons
+    addIcons({
+      compassOutline,
+      waterOutline,
+      contractOutline,
+      cloudOutline,
+      locationOutline,
+    });
+  }
+
+  ngOnInit() {
+    // Check if we want to load with current location on startup
+    const savedLocation = this.locationService.getLastLocation();
+    if (savedLocation) {
+      this.loadFromSavedLocation(savedLocation);
+    }
+  }
+
+  // Load data from a saved location
+  async loadFromSavedLocation(location: any) {
+    this.lat = location.lat;
+    this.lon = location.lon;
+    this.geoRevResp = [{ name: location.name }];
+    await this.getWeatherData(this.lat, this.lon);
+    this.showContent = true;
+  }
+
+  // Get current location and display weather data
+  async getCurrentLocation() {
+    const loading = await this.loadingController.create({
+      message: 'Getting your location...',
+      spinner: 'bubbles',
+    });
+    await loading.present();
+    this.isLoading = true;
+
+    try {
+      const position = await this.locationService
+        .getCurrentPosition()
+        .toPromise();
+
+      if (!position) {
+        throw new Error('Unable to get current position');
+      }
+
+      this.lat = position.coords.latitude;
+      this.lon = position.coords.longitude;
+
+      // Get location name using reverse geocoding
+      const locationData = await this.reverseWeatherService
+        .getReverseGeocoding(this.lat, this.lon)
+        .toPromise();
+
+      if (locationData && locationData[0]) {
+        const name = locationData[0].name;
+        this.locationService.saveLastLocation(this.lat, this.lon, name);
+        this.geoRevResp = locationData;
+      } else {
+        this.geoRevResp = [{ name: 'Current Location' }];
+      }
+
+      // Get weather data
+      await this.getWeatherData(this.lat, this.lon);
+      this.showContent = true;
+    } catch (error) {
+      console.error('Error getting location:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message:
+          'Unable to get your current location. Please check your permissions.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    } finally {
+      loading.dismiss();
+      this.isLoading = false;
+    }
   }
 
   // Event handler for search box.
@@ -98,6 +183,15 @@ export class Tab2Page {
           console.log(this.lon); // Logs lon
           await this.getReverseGeocoding(this.lat, this.lon);
           await this.getWeatherData(this.lat, this.lon);
+
+          // Save this location for future use
+          if (this.geoRevResp && this.geoRevResp[0]) {
+            this.locationService.saveLastLocation(
+              this.lat,
+              this.lon,
+              this.geoRevResp[0].name
+            );
+          }
         } else {
           // Handle the case when response is undefined or empty
           console.error('Error in geocoding service: Check your input.');
@@ -147,9 +241,9 @@ export class Tab2Page {
   // IonRefresher. Refreshes the page with the new api call
   async handleRefresh(event: any) {
     setTimeout(() => {
-      if (this.userInput == null) {
+      if (this.userInput == null && !this.lat && !this.lon) {
         console.log('Refreshing...');
-        console.log('No User Input!');
+        console.log('No User Input or location!');
         console.log('Done');
         event.target.complete();
       } else {
