@@ -1,130 +1,236 @@
-/* Font sizes */
-$size1: 4em;
-$size2: 3.5em;
-$size3: 3em;
-$size4: 2em;
-$size5: 1.5em;
-$size6: 1em;
+/* Font sizes using Ionic variables for consistency */
+$size1: 4rem;
+$size2: 3rem;
+$size3: 2.5rem;
+$size4: 2rem;
+$size5: 1.5rem;
+$size6: 1rem;
+
+/* Modern Weather App Styling */
+
+:host {
+  --page-margin: 16px;
+  --card-border-radius: 16px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
 
 ion-content {
-  --background: linear-gradient(
-    150deg,
-    rgba(48, 107, 190, 1) 15%,
-    rgba(1, 60, 96, 1) 85%
-  );
-  --ion-text-color: #cfe5fd;
+  --background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
+  --ion-text-color: var(--ion-color-light);
 }
 
-.conditions {
-  display: block;
-  text-align: center;
-  border-style: solid;
-  border-color: #013c60;
-  background-color: #013c60;
-  margin: 0.2em;
-  border-radius: 5px;
+ion-toolbar {
+  --background: transparent;
+  --color: var(--ion-color-light);
 }
 
-.forecast {
-  display: block;
-  padding: 1em;
-  border-style: solid;
-  border-color: #013c60;
-  background-color: #013c60;
-  margin: 0.5em;
-  border-radius: 5px;
+ion-header {
+  ion-toolbar {
+    --background: rgba(var(--ion-color-primary-rgb), 0.8);
+    --border-color: transparent;
+  }
 }
 
-.main {
-  padding-top: 4em;
-  display: block;
-  text-align: center;
-  padding-bottom: 2em;
-}
+.search-container {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  
+  ion-searchbar {
+    flex: 1;
+    --background: rgba(255, 255, 255, 0.2);
+    --color: var(--ion-color-light);
+    --placeholder-color: rgba(255, 255, 255, 0.6);
+    --icon-color: var(--ion-color-light);
+    --clear-button-color: var(--ion-color-light);
+    --border-radius: 12px;
+    --box-shadow: none;
+    padding: 0;
 
-.city {
-  display: block;
-  font-size: $size3;
-  font-weight: bold;
-  padding-top: 0.2em;
+    &::part(icon) {
+      color: var(--ion-color-light);
+    }
+  }
+  
+  .location-button {
+    margin-right: 8px;
+    --background: rgba(255, 255, 255, 0.2);
+    --color: var(--ion-color-light);
+    --border-radius: 12px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    height: 44px;
+    width: 44px;
+  }
 }
 
 .tempgrid {
-  display: block;
-  padding-bottom: 2em;
+  margin: 0 var(--page-margin);
+  padding: 16px;
+  border-radius: var(--card-border-radius);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--box-shadow);
 }
 
-.current {
-  display: block;
-  font-weight: bold;
-  color: lightblue;
-  padding-bottom: 0.2em;
-  padding-left: 0.25em;
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--ion-color-light);
+  padding-top: 2rem;
+  padding-bottom: 1rem;
 }
+
+.city {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .date {
-  display: block;
-  font-size: $size5;
-  font-weight: bold;
-  padding-left: 0.25em;
-}
-
-.description {
-  display: block;
-  font-size: $size5;
-  font-weight: bold;
-  padding-left: 0.25em;
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 16px;
+  margin-left: 0.25rem;
 }
 
 .temperature {
-  display: block;
-  font-size: $size1;
-  padding-top: 0.25em;
-  margin: 0px;
-  color: white;
+  font-size: 64px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: var(--ion-color-light);
 }
 
-.detailed {
-  margin: auto;
-  padding: auto;
-  display: block;
-  font-size: $size6;
-  font-weight: bold;
+.description {
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-top: 8px;
+  text-align: center;
+  width: 100%;
 }
 
 .icon {
+  margin: -16px 0;
+  
+  img {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  }
+}
+
+.current, .forecastdivider {
+  margin: 20px var(--page-margin) 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ion-color-light);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   display: block;
-  color: white;
 }
 
-.day {
+/* Conditions grid styling */
+.conditions {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  margin: 6px;
+  padding: 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  font-weight: bold;
+  text-align: center;
+  color: var(--ion-color-light);
+  transition: transform 0.2s ease, background 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .detailed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    &:first-child {
+      margin-bottom: 8px;
+      opacity: 0.9;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    &:last-child {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    ion-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+  }
 }
 
-.precipitation {
-  display: block;
+/* Forecast styling */
+.forecast {
+  margin: 0 var(--page-margin) 24px;
+  padding: 16px;
+  border-radius: var(--card-border-radius);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--box-shadow);
+  overflow-x: auto;
+  
+  ion-row {
+    margin-bottom: 8px;
+    flex-wrap: nowrap;
+  }
+  
+  ion-col {
+    text-align: center;
+    min-width: 60px;
+    color: var(--ion-color-light);
+  }
+  
+  .day {
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  
+  .gridicon {
+    img {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+  }
+  
+  .max {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  .min {
+    font-weight: 500;
+    font-size: 14px;
+    opacity: 0.7;
+  }
 }
 
-.gridicon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Loading spinner styles */
+ion-spinner {
+  color: var(--ion-color-light);
+  transform: scale(1.5);
+  opacity: 0.8;
 }
 
-.max,
-.min {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.forecastdivider {
-  display: block;
-  font-weight: bold;
-  color: lightblue;
-  padding-bottom: 0.2em;
-  padding-left: 0.5em;
-  padding-top: 1em;
+ion-refresher {
+  --ion-text-color: var(--ion-color-light);
 }
