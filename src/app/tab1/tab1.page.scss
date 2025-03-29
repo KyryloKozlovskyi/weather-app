@@ -1,10 +1,46 @@
+/* Font sizes using Ionic variables for consistency */
+$size1: 4rem;
+$size2: 3rem;
+$size3: 2.5rem;
+$size4: 2rem;
+$size5: 1.5rem;
+$size6: 1rem;
+
+/* Modern Weather App Styling */
+
+:host {
+  --page-margin: 16px;
+  --card-border-radius: 16px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+ion-content {
+  --background: linear-gradient(
+    135deg,
+    var(--ion-color-primary) 0%,
+    var(--ion-color-secondary) 100%
+  );
+  --ion-text-color: var(--ion-color-light);
+}
+
+ion-toolbar {
+  --background: transparent;
+  --color: var(--ion-color-light);
+}
+
+ion-header {
+  ion-toolbar {
+    --background: rgba(var(--ion-color-primary-rgb), 0.8);
+    --border-color: transparent;
+  }
+}
+
 .current-weather-container {
   padding: 16px;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  background: linear-gradient(135deg, #e6f7ff, #f0f8ff);
 }
 
 ion-card {
@@ -15,17 +51,20 @@ ion-card {
 }
 
 .location-name {
-  font-size: 2.2rem;
+  font-size: 28px;
   font-weight: 700;
   margin-bottom: 4px;
   text-align: center;
+  color: var(--ion-color-light);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .current-datetime {
-  color: var(--ion-color-medium);
-  font-size: 1rem;
-  margin-bottom: 32px;
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 16px;
   text-align: center;
+  color: var(--ion-color-light);
 }
 
 .weather-main {
@@ -37,26 +76,41 @@ ion-card {
 
 .weather-icon {
   text-align: center;
-
   img {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
   }
 }
 
 .temperature {
   text-align: center;
-
   .temp-value {
-    font-size: 4rem;
-    font-weight: bold;
+    font-size: 64px;
+    font-weight: 700;
     margin: 0;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    color: var(--ion-color-light);
   }
 }
 
 .weather-description {
   text-align: center;
-  font-size: 1.4rem;
+  font-size: 20px;
+  font-weight: 500;
   margin: 0;
   text-transform: capitalize;
+  color: var(--ion-color-light);
+}
+
+/* Loading spinner styles */
+ion-spinner {
+  color: var(--ion-color-light);
+  transform: scale(1.5);
+  opacity: 0.8;
+}
+
+ion-refresher {
+  --ion-text-color: var(--ion-color-light);
 }

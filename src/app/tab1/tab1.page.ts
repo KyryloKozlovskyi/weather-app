@@ -10,6 +10,7 @@ import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
 import { WindPipe } from '../pipes/wind.pipe';
 import { DayPipe } from '../pipes/day.pipe';
 import { RainPipe } from '../pipes/rain.pipe';
+import { searchOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-tab1',
