@@ -32,6 +32,8 @@ import { addIcons } from 'ionicons';
 import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
 import { AlertController, LoadingController } from '@ionic/angular/standalone';
 import { LocationService } from '../services/location.service';
+import { SettingsService } from '../services/settings.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab2',
@@ -71,6 +73,7 @@ export class Tab2Page {
   public lon: any; // Longitude
   public showContent: boolean = false; // Show content flag
   public isLoading: boolean = false;
+  private unitSubscription: Subscription | undefined;
 
   // Injecting the services
   constructor(
@@ -79,7 +82,8 @@ export class Tab2Page {
     private reverseWeatherService: ReverseGeocodingService,
     private alertController: AlertController,
     private locationService: LocationService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private settingsService: SettingsService
   ) {
     addIcons({
       compassOutline,
@@ -95,6 +99,21 @@ export class Tab2Page {
     const savedLocation = this.locationService.getLastLocation();
     if (savedLocation) {
       this.loadFromSavedLocation(savedLocation);
+    }
+
+    // Subscribe to unit changes to refresh weather data
+    this.unitSubscription = this.settingsService.temperatureUnit$.subscribe(
+      () => {
+        if (this.lat && this.lon) {
+          this.getWeatherData(this.lat, this.lon);
+        }
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.unitSubscription) {
+      this.unitSubscription.unsubscribe();
     }
   }
 
@@ -259,5 +278,18 @@ export class Tab2Page {
           });
       }
     }, 2000);
+  }
+
+  // Add helper methods for unit display
+  getUnitSymbol(): string {
+    return this.settingsService.getUnitSymbol();
+  }
+
+  getWindSpeedUnit(): string {
+    return this.settingsService.getWindSpeedUnit();
+  }
+
+  getRainfallUnit(): string {
+    return this.settingsService.getRainfallUnit();
   }
 }

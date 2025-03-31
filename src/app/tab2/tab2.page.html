@@ -38,7 +38,7 @@
           {{ resp.current.dt * 1000 | date:'string' }}
         </div>
         <div class="temperature" *ngIf="resp.current">
-          {{ resp.current.temp | number: '1.0-0' }}°
+          {{ resp.current.temp | number: '1.0-0' }}{{ getUnitSymbol() }}
         </div>
         <div class="icon" *ngIf="resp.current">
           <img
@@ -64,7 +64,7 @@
               Wind
             </div>
             <div class="detailed" *ngIf="resp.current">
-              {{ resp.current.wind_speed }} km/h
+              {{ resp.current.wind_speed }} {{ getWindSpeedUnit() }}
             </div>
           </div>
         </ion-col>
@@ -76,7 +76,7 @@
               Rainfall
             </div>
             <div class="detailed" *ngIf="resp.current">
-              {{ resp.current.rain | rain:resp }} mm
+              {{ resp.current.rain | rain:resp }} {{ getRainfallUnit() }}
             </div>
           </div>
         </ion-col>
@@ -202,51 +202,51 @@
       </ion-row>
       <!-- Max Temp -->
       <ion-row>
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[0].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[1].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[2].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[3].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[4].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[5].temp.max | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="max" *ngIf="resp.daily"
-          >{{ resp.daily[6].temp.max | number: '1.0-0' }}°</ion-col
-        >
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[0].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[1].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[2].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[3].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[4].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[5].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="max" *ngIf="resp.daily">
+          {{ resp.daily[6].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
       </ion-row>
       <!-- Min Temp -->
       <ion-row>
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[0].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[1].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[2].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[3].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[4].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[5].temp.min | number: '1.0-0' }}°</ion-col
-        >
-        <ion-col class="min" *ngIf="resp.daily"
-          >{{ resp.daily[6].temp.min | number: '1.0-0' }}°</ion-col
-        >
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[0].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[1].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[2].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[3].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[4].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[5].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
+        <ion-col class="min" *ngIf="resp.daily">
+          {{ resp.daily[6].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
+        </ion-col>
       </ion-row>
     </ion-grid>
   </div>
