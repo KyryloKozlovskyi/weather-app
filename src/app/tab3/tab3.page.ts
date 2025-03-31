@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { LocationService } from '../services/location.service';
+import { SettingsService } from '../services/settings.service';
+import { addIcons } from 'ionicons';
 import {
   informationCircleOutline,
   codeOutline,
@@ -12,7 +14,6 @@ import {
   contrastOutline,
   moonOutline,
 } from 'ionicons/icons';
-import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-tab3',
@@ -28,7 +29,8 @@ export class Tab3Page implements OnInit {
 
   constructor(
     private locationService: LocationService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private settingsService: SettingsService
   ) {
     addIcons({
       informationCircleOutline,
@@ -45,12 +47,10 @@ export class Tab3Page implements OnInit {
     // Check if there's a saved location
     this.savedLocation = this.locationService.getLastLocation();
 
-    // Check if there are saved preferences in localStorage
-    const savedUnit = localStorage.getItem('temperatureUnit');
-    if (savedUnit) {
-      this.temperatureUnit = savedUnit;
-    }
+    // Get current temperature unit from the service
+    this.temperatureUnit = this.settingsService.currentTemperatureUnit;
 
+    // Get theme settings
     const savedTheme = localStorage.getItem('darkMode');
     if (savedTheme) {
       this.darkMode = savedTheme;
@@ -61,7 +61,7 @@ export class Tab3Page implements OnInit {
   // Handle temperature unit change
   unitChanged(event: any) {
     this.temperatureUnit = event.detail.value;
-    localStorage.setItem('temperatureUnit', this.temperatureUnit);
+    this.settingsService.setTemperatureUnit(this.temperatureUnit);
     this.showToast('Temperature unit updated');
   }
 
