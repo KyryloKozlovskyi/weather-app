@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 
 import { WeatherService } from '../services/weather.service';
 import { LocationService } from '../services/location.service';
@@ -10,7 +10,7 @@ import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
 import { WindPipe } from '../pipes/wind.pipe';
 import { DayPipe } from '../pipes/day.pipe';
 import { RainPipe } from '../pipes/rain.pipe';
-import { searchOutline } from 'ionicons/icons';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-tab1',
@@ -19,22 +19,38 @@ import { searchOutline } from 'ionicons/icons';
   standalone: true,
   imports: [CommonModule, IonicModule, DatePipe, DecimalPipe],
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page implements OnInit, OnDestroy {
   currentWeather: any = null;
   location: any = null;
   error: string = '';
   loading: boolean = true;
-  units: string = 'metric';
+  private unitSubscription: Subscription | undefined;
 
   constructor(
     private weatherService: WeatherService,
     private locationService: LocationService,
     private reverseGeocodingService: ReverseGeocodingService,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private settingsService: SettingsService
   ) {}
 
   ngOnInit() {
     this.loadCurrentLocation();
+
+    // Subscribe to unit changes to refresh weather data
+    this.unitSubscription = this.settingsService.temperatureUnit$.subscribe(
+      () => {
+        if (this.location) {
+          this.loadWeatherData(this.location.lat, this.location.lon);
+        }
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    if (this.unitSubscription) {
+      this.unitSubscription.unsubscribe();
+    }
   }
 
   async loadCurrentLocation() {
@@ -144,6 +160,10 @@ export class Tab1Page implements OnInit {
   }
 
   getUnitSymbol(): string {
-    return this.units === 'metric' ? '°C' : '°F';
+    return this.settingsService.getUnitSymbol();
+  }
+
+  getWindSpeedUnit(): string {
+    return this.settingsService.getWindSpeedUnit();
   }
 }
