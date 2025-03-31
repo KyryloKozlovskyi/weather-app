@@ -76,7 +76,7 @@
               Rainfall
             </div>
             <div class="detailed" *ngIf="resp.current">
-              {{ resp.current.rain | rain}} mm
+              {{ resp.current.rain | rain:resp }} mm
             </div>
           </div>
         </ion-col>
