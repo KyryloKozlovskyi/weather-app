@@ -69,4 +69,10 @@ export class LocationService {
 
     return location;
   }
+
+  // Clear the last saved location from localStorage
+  clearLastLocation(): void {
+    console.log('[LocationService] Clearing last location from localStorage');
+    localStorage.removeItem('lastLocation');
+  }
 }

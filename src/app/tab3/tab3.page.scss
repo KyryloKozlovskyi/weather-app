@@ -1,0 +1,128 @@
+/* Font sizes using Ionic variables for consistency */
+$size1: 4rem;
+$size2: 3rem;
+$size3: 2.5rem;
+$size4: 2rem;
+$size5: 1.5rem;
+$size6: 1rem;
+
+/* Modern Weather App Styling */
+
+:host {
+  --page-margin: 16px;
+  --card-border-radius: 16px;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+ion-content {
+  --background: linear-gradient(
+    135deg,
+    var(--ion-color-primary) 0%,
+    var(--ion-color-secondary) 100%
+  );
+  --ion-text-color: var(--ion-color-light);
+}
+
+ion-toolbar {
+  --background: transparent;
+  --color: var(--ion-color-light);
+}
+
+ion-header {
+  ion-toolbar {
+    --background: rgba(var(--ion-color-primary-rgb), 0.8);
+    --border-color: transparent;
+  }
+}
+
+.settings-container {
+  padding: 16px;
+}
+
+ion-card {
+  border-radius: var(--card-border-radius);
+  margin-bottom: 16px;
+  box-shadow: var(--box-shadow);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+
+  ion-card-header {
+    padding-bottom: 8px;
+  }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ion-color-light);
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+  }
+
+  ion-card-content {
+    color: var(--ion-color-light);
+    opacity: 0.9;
+  }
+}
+
+ion-item {
+  --background: transparent;
+  --color: var(--ion-color-light);
+}
+
+ion-segment {
+  --background: rgba(255, 255, 255, 0.1);
+  width: 100%;
+
+  ion-segment-button {
+    --color: var(--ion-color-light);
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: var(--ion-color-light);
+  }
+}
+
+ion-radio {
+  --color: var(--ion-color-light);
+  --color-checked: var(--ion-color-light);
+}
+
+ion-list {
+  background: transparent;
+
+  ion-item {
+    --background: transparent;
+    --border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.location-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.location-coords {
+  margin-bottom: 16px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.no-location {
+  text-align: center;
+  margin: 16px 0;
+
+  .hint {
+    font-size: 14px;
+    opacity: 0.8;
+    font-style: italic;
+  }
+}
+
+.toast-message {
+  text-align: center;
+  font-weight: 500;
+}

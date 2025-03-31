@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 3
+      Settings
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +9,101 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
+      <ion-title size="large">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <div class="settings-container">
+    <!-- Units Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="thermometer-outline"></ion-icon>
+          Temperature Units
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-segment [(ngModel)]="temperatureUnit" (ionChange)="unitChanged($event)">
+              <ion-segment-button value="metric">
+                <ion-label>°C</ion-label>
+              </ion-segment-button>
+              <ion-segment-button value="imperial">
+                <ion-label>°F</ion-label>
+              </ion-segment-button>
+            </ion-segment>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Theme Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="contrast-outline"></ion-icon>
+          App Theme
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-radio-group [(ngModel)]="darkMode" (ionChange)="themeChanged($event)">
+            <ion-item>
+              <ion-label>Light</ion-label>
+              <ion-radio value="light"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>Dark</ion-label>
+              <ion-radio value="dark"></ion-radio>
+            </ion-item>
+            <ion-item>
+              <ion-label>System Default</ion-label>
+              <ion-radio value="system"></ion-radio>
+            </ion-item>
+          </ion-radio-group>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Saved Location Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="location-outline"></ion-icon>
+          Saved Location
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="savedLocation">
+          <p class="location-name">{{ savedLocation.name }}</p>
+          <p class="location-coords">Lat: {{ savedLocation.lat | number:'1.4-4' }}, Lon: {{ savedLocation.lon | number:'1.4-4' }}</p>
+          <ion-button expand="block" color="danger" (click)="clearSavedLocation()">
+            <ion-icon slot="start" name="trash-outline"></ion-icon>
+            Clear Saved Location
+          </ion-button>
+        </div>
+        <div *ngIf="!savedLocation" class="no-location">
+          <p>No location saved</p>
+          <p class="hint">Use the location button in the Weather tab to save your location</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- About Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="information-circle-outline"></ion-icon>
+          About
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Weather App</strong></p>
+        <p>Version 1.0.0</p>
+        <p>Weather data provided by OpenWeatherMap</p>
+        <small>© 2025 All Rights Reserved</small>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>
