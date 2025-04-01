@@ -1,2 +1,32 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+:root {
+  /* Light mode variables */
+  --ion-background-color: #f4f5f8;
+  --ion-background-color-rgb: 244, 245, 248;
+  --ion-text-color: #000000;
+  --ion-text-color-rgb: 0, 0, 0;
+
+  --ion-card-background: rgba(255, 255, 255, 0.8);
+  --card-text-color: #000000;
+  --backdrop-opacity: 0.8;
+
+  --primary-gradient-start: #4facfe;
+  --primary-gradient-end: #00f2fe;
+}
+
+/* Dark mode when .dark class is added to body */
+.dark {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-card-background: rgba(30, 30, 30, 0.75);
+  --card-text-color: #ffffff;
+  --backdrop-opacity: 0.9;
+
+  --primary-gradient-start: #243949;
+  --primary-gradient-end: #517fa4;
+}

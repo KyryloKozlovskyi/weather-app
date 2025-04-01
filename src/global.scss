@@ -35,3 +35,77 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+/* Add these styles to your global.scss */
+ion-content {
+  --background: linear-gradient(
+    135deg,
+    var(--primary-gradient-start) 0%,
+    var(--primary-gradient-end) 100%
+  ) !important;
+}
+
+/* Updated card styling with better transparency handling */
+ion-card {
+  background: var(--ion-card-background) !important;
+  backdrop-filter: blur(10px);
+  color: var(--card-text-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+/* Light theme specific overrides */
+:root ion-card {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dark theme specific overrides */
+.dark ion-card {
+  background: rgba(40, 40, 45, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Ensuring text contrast in both themes */
+:root ion-card-title,
+:root ion-card-subtitle {
+  color: var(--ion-color-dark);
+}
+
+:root ion-card-content,
+:root ion-item {
+  color: var(--ion-color-medium);
+}
+
+/* Specific styling for App Theme card in light mode */
+:root ion-card:has(ion-card-title:has(ion-icon[name="contrast-outline"])) {
+  ion-card-title,
+  ion-card-subtitle,
+  ion-item ion-label,
+  ion-item ion-text,
+  ion-radio-group ion-item ion-label,
+  ion-radio-group ion-item ion-icon {
+    color: #222428;
+  }
+}
+
+.dark ion-card-title,
+.dark ion-card-subtitle,
+.dark ion-card-content,
+.dark ion-item {
+  color: var(--ion-color-light);
+}
+
+ion-item {
+  --background: transparent;
+  --color: var(--ion-text-color);
+}
+
+/* For theme toggle switch styling */
+.theme-toggle {
+  display: flex;
+  padding: 4px;
+  background: rgba(var(--ion-background-color-rgb), 0.1);
+  border-radius: 16px;
+  margin: 8px 0;
+}

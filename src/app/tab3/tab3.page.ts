@@ -77,6 +77,13 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.darkMode = event.detail.value;
     localStorage.setItem('darkMode', this.darkMode);
     this.applyTheme(this.darkMode);
+    
+    // Force Ionic components to update their styles
+    document.querySelector('ion-content')?.classList.add('force-refresh');
+    setTimeout(() => {
+      document.querySelector('ion-content')?.classList.remove('force-refresh');
+    }, 10);
+    
     this.showToast('Theme preference updated');
   }
 
@@ -105,8 +112,10 @@ export class Tab3Page implements OnInit, OnDestroy {
 
     if (theme === 'dark') {
       document.body.classList.add('dark');
+      document.documentElement.setAttribute('color-scheme', 'dark');
     } else if (theme === 'light') {
       document.body.classList.add('light');
+      document.documentElement.setAttribute('color-scheme', 'light');
     } else if (theme === 'system') {
       // Clean up previous listener if exists
       if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
@@ -115,21 +124,27 @@ export class Tab3Page implements OnInit, OnDestroy {
 
       // Check system preference
       this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      if (this.darkModeMediaQuery.matches) {
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.add('light');
-      }
+      const isDarkMode = this.darkModeMediaQuery.matches;
+      
+      document.body.classList.add(isDarkMode ? 'dark' : 'light');
+      document.documentElement.setAttribute('color-scheme', isDarkMode ? 'dark' : 'light');
 
       // Listen for changes in system preference
       this.darkModeChangeHandler = (e) => {
         if (this.darkMode === 'system') {
           document.body.classList.remove('dark', 'light');
           document.body.classList.add(e.matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('color-scheme', e.matches ? 'dark' : 'light');
         }
       };
 
       this.darkModeMediaQuery.addEventListener('change', this.darkModeChangeHandler);
     }
+
+    // Force component update by triggering change detection
+    setTimeout(() => {
+      // This triggers a style recalculation
+      window.dispatchEvent(new Event('resize'));
+    }, 10);
   }
 }
