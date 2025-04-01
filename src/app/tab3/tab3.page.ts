@@ -27,7 +27,8 @@ export class Tab3Page implements OnInit, OnDestroy {
   darkMode: string = 'system'; // Default to system
   savedLocation: any = null;
   private darkModeMediaQuery: MediaQueryList | null = null;
-  private darkModeChangeHandler: ((e: MediaQueryListEvent) => void) | null = null;
+  private darkModeChangeHandler: ((e: MediaQueryListEvent) => void) | null =
+    null;
 
   constructor(
     private locationService: LocationService,
@@ -61,7 +62,10 @@ export class Tab3Page implements OnInit, OnDestroy {
   ngOnDestroy() {
     // Clean up event listener to prevent memory leaks
     if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
-      this.darkModeMediaQuery.removeEventListener('change', this.darkModeChangeHandler);
+      this.darkModeMediaQuery.removeEventListener(
+        'change',
+        this.darkModeChangeHandler
+      );
     }
   }
 
@@ -77,13 +81,13 @@ export class Tab3Page implements OnInit, OnDestroy {
     this.darkMode = event.detail.value;
     localStorage.setItem('darkMode', this.darkMode);
     this.applyTheme(this.darkMode);
-    
+
     // Force Ionic components to update their styles
     document.querySelector('ion-content')?.classList.add('force-refresh');
     setTimeout(() => {
       document.querySelector('ion-content')?.classList.remove('force-refresh');
     }, 10);
-    
+
     this.showToast('Theme preference updated');
   }
 
@@ -119,32 +123,46 @@ export class Tab3Page implements OnInit, OnDestroy {
     } else if (theme === 'system') {
       // Clean up previous listener if exists
       if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
-        this.darkModeMediaQuery.removeEventListener('change', this.darkModeChangeHandler);
+        this.darkModeMediaQuery.removeEventListener(
+          'change',
+          this.darkModeChangeHandler
+        );
       }
 
       // Check system preference
-      this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      this.darkModeMediaQuery = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      );
       const isDarkMode = this.darkModeMediaQuery.matches;
-      
+
       document.body.classList.add(isDarkMode ? 'dark' : 'light');
-      document.documentElement.setAttribute('color-scheme', isDarkMode ? 'dark' : 'light');
+      document.documentElement.setAttribute(
+        'color-scheme',
+        isDarkMode ? 'dark' : 'light'
+      );
 
       // Listen for changes in system preference
       this.darkModeChangeHandler = (e) => {
         if (this.darkMode === 'system') {
           document.body.classList.remove('dark', 'light');
           document.body.classList.add(e.matches ? 'dark' : 'light');
-          document.documentElement.setAttribute('color-scheme', e.matches ? 'dark' : 'light');
+          document.documentElement.setAttribute(
+            'color-scheme',
+            e.matches ? 'dark' : 'light'
+          );
         }
       };
 
-      this.darkModeMediaQuery.addEventListener('change', this.darkModeChangeHandler);
+      this.darkModeMediaQuery.addEventListener(
+        'change',
+        this.darkModeChangeHandler
+      );
     }
 
-    // Force component update by triggering change detection
+    // Force a repaint to ensure styles are applied
+    document.body.style.display = 'none';
     setTimeout(() => {
-      // This triggers a style recalculation
-      window.dispatchEvent(new Event('resize'));
-    }, 10);
+      document.body.style.display = '';
+    }, 5);
   }
 }

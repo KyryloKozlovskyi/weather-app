@@ -23,7 +23,12 @@
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255, 255, 255;
 
-  --ion-card-background: rgba(30, 30, 30, 0.75);
+  --ion-card-background: rgba(
+    60,
+    60,
+    70,
+    0.6
+  ); /* Lighter and more transparent */
   --card-text-color: #ffffff;
   --backdrop-opacity: 0.9;
 
