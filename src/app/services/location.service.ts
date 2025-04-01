@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from, of, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocationService {
+  // Create a BehaviorSubject to hold the current location
+  private locationSubject = new BehaviorSubject<{ lat: number; lon: number; name: string } | null>(null);
+  
+  // Create an observable that other components can subscribe to
+  public locationChanged$ = this.locationSubject.asObservable();
+
   constructor() {
     console.log('[LocationService] Service initialized');
+    // Initialize with saved location if available
+    const savedLocation = this.getLastLocation();
+    this.locationSubject.next(savedLocation);
   }
 
   getCurrentPosition(): Observable<GeolocationPosition> {
@@ -46,11 +55,14 @@ export class LocationService {
     );
   }
 
-  // Save last used location to local storage
+  // Save last used location to local storage and notify subscribers
   saveLastLocation(lat: number, lon: number, name: string): void {
     console.log(`[LocationService] Saving location: ${name} (${lat}, ${lon})`);
     const location = { lat, lon, name };
     localStorage.setItem('lastLocation', JSON.stringify(location));
+    
+    // Notify all subscribers that the location has changed
+    this.locationSubject.next(location);
   }
 
   // Get last used location from local storage
@@ -70,9 +82,12 @@ export class LocationService {
     return location;
   }
 
-  // Clear the last saved location from localStorage
+  // Clear the last saved location from localStorage and notify subscribers
   clearLastLocation(): void {
     console.log('[LocationService] Clearing last location from localStorage');
     localStorage.removeItem('lastLocation');
+    
+    // Notify all subscribers that the location has been cleared
+    this.locationSubject.next(null);
   }
 }

@@ -24,7 +24,9 @@ export class Tab1Page implements OnInit, OnDestroy {
   location: any = null;
   error: string = '';
   loading: boolean = true;
+  showContent: boolean = true;
   private unitSubscription: Subscription | undefined;
+  private locationSubscription: Subscription | undefined;
 
   constructor(
     private weatherService: WeatherService,
@@ -35,6 +37,24 @@ export class Tab1Page implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Initial load from saved location
+    const savedLocation = this.locationService.getLastLocation();
+    if (savedLocation) {
+      this.loadFromSavedLocation(savedLocation);
+    }
+
+    // Subscribe to location changes
+    this.locationSubscription = this.locationService.locationChanged$.subscribe(
+      (location) => {
+        if (location) {
+          this.loadFromSavedLocation(location);
+        } else {
+          // Handle case where location was cleared
+          this.clearWeatherData();
+        }
+      }
+    );
+
     this.loadCurrentLocation();
 
     // Subscribe to unit changes to refresh weather data
@@ -50,6 +70,10 @@ export class Tab1Page implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.unitSubscription) {
       this.unitSubscription.unsubscribe();
+    }
+
+    if (this.locationSubscription) {
+      this.locationSubscription.unsubscribe();
     }
   }
 
@@ -165,5 +189,19 @@ export class Tab1Page implements OnInit, OnDestroy {
 
   getWindSpeedUnit(): string {
     return this.settingsService.getWindSpeedUnit();
+  }
+
+  clearWeatherData() {
+    // Clear any displayed weather data
+    this.showContent = false;
+    this.currentWeather = null;
+    this.location = null;
+    this.loading = false;
+    this.error = '';
+  }
+
+  private loadFromSavedLocation(location: any) {
+    this.location = location;
+    this.loadWeatherData(location.lat, location.lon);
   }
 }

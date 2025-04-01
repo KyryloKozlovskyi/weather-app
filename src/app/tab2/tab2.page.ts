@@ -74,6 +74,7 @@ export class Tab2Page {
   public showContent: boolean = false; // Show content flag
   public isLoading: boolean = false;
   private unitSubscription: Subscription | undefined;
+  private locationSubscription: Subscription | undefined;
 
   // Injecting the services
   constructor(
@@ -101,6 +102,21 @@ export class Tab2Page {
       this.loadFromSavedLocation(savedLocation);
     }
 
+    // Subscribe to location changes
+    this.locationSubscription = this.locationService.locationChanged$.subscribe(
+      (location) => {
+        if (location) {
+          this.loadFromSavedLocation(location);
+        } else {
+          // Handle case where location was cleared
+          this.showContent = false;
+          this.lat = null;
+          this.lon = null;
+          this.geoRevResp = null;
+        }
+      }
+    );
+
     // Subscribe to unit changes to refresh weather data
     this.unitSubscription = this.settingsService.temperatureUnit$.subscribe(
       () => {
@@ -112,8 +128,14 @@ export class Tab2Page {
   }
 
   ngOnDestroy() {
+    // Clean up subscriptions to prevent memory leaks
     if (this.unitSubscription) {
       this.unitSubscription.unsubscribe();
+    }
+
+    // Also unsubscribe from the location changes
+    if (this.locationSubscription) {
+      this.locationSubscription.unsubscribe();
     }
   }
 

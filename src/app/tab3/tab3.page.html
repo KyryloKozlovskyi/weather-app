@@ -49,7 +49,10 @@
       </ion-card-header>
       <ion-card-content>
         <ion-list lines="none">
-          <ion-radio-group [(ngModel)]="darkMode" (ionChange)="themeChanged($event)">
+          <ion-radio-group
+            [(ngModel)]="darkMode"
+            (ionChange)="themeChanged($event)"
+          >
             <ion-item>
               <ion-icon slot="start" name="sunny-outline"></ion-icon>
               <ion-label>Light</ion-label>
@@ -85,20 +88,55 @@
             Lat: {{ savedLocation.lat | number:'1.4-4' }}, Lon: {{
             savedLocation.lon | number:'1.4-4' }}
           </p>
-          <ion-button
-            expand="block"
-            color="danger"
-            (click)="clearSavedLocation()"
-          >
-            <ion-icon slot="start" name="trash-outline"></ion-icon>
-            Clear Saved Location
-          </ion-button>
+
+          <ion-item>
+            <ion-input
+              placeholder="Enter city name"
+              [(ngModel)]="cityInput"
+              label="Change Location"
+              label-placement="floating"
+            ></ion-input>
+            <ion-button slot="end" (click)="changeLocation()">
+              <ion-icon name="search-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <div class="button-container">
+            <ion-button expand="block" (click)="useCurrentLocation()">
+              <ion-icon slot="start" name="location-outline"></ion-icon>
+              Use Current Location
+            </ion-button>
+            <ion-button
+              expand="block"
+              color="danger"
+              (click)="clearSavedLocation()"
+            >
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Clear Saved Location
+            </ion-button>
+          </div>
         </div>
+
         <div *ngIf="!savedLocation" class="no-location">
           <p>No location saved</p>
-          <p class="hint">
-            Use the location button in the Weather tab to save your location
-          </p>
+          <p class="hint">Set a location using one of the options below</p>
+
+          <ion-item>
+            <ion-input
+              placeholder="Enter city name"
+              [(ngModel)]="cityInput"
+              label="Set Location"
+              label-placement="floating"
+            ></ion-input>
+            <ion-button slot="end" (click)="changeLocation()">
+              <ion-icon name="search-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <ion-button expand="block" (click)="useCurrentLocation()">
+            <ion-icon slot="start" name="location-outline"></ion-icon>
+            Use Current Location
+          </ion-button>
         </div>
       </ion-card-content>
     </ion-card>
