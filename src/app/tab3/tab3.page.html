@@ -1,8 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Settings
-    </ion-title>
+    <ion-title> Settings </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -25,7 +23,10 @@
       <ion-card-content>
         <ion-list lines="none">
           <ion-item>
-            <ion-segment [(ngModel)]="temperatureUnit" (ionChange)="unitChanged($event)">
+            <ion-segment
+              [(ngModel)]="temperatureUnit"
+              (ionChange)="unitChanged($event)"
+            >
               <ion-segment-button value="metric">
                 <ion-label>°C</ion-label>
               </ion-segment-button>
@@ -50,14 +51,17 @@
         <ion-list lines="none">
           <ion-radio-group [(ngModel)]="darkMode" (ionChange)="themeChanged($event)">
             <ion-item>
+              <ion-icon slot="start" name="sunny-outline"></ion-icon>
               <ion-label>Light</ion-label>
               <ion-radio value="light"></ion-radio>
             </ion-item>
             <ion-item>
+              <ion-icon slot="start" name="moon-outline"></ion-icon>
               <ion-label>Dark</ion-label>
               <ion-radio value="dark"></ion-radio>
             </ion-item>
             <ion-item>
+              <ion-icon slot="start" name="settings-outline"></ion-icon>
               <ion-label>System Default</ion-label>
               <ion-radio value="system"></ion-radio>
             </ion-item>
@@ -77,15 +81,24 @@
       <ion-card-content>
         <div *ngIf="savedLocation">
           <p class="location-name">{{ savedLocation.name }}</p>
-          <p class="location-coords">Lat: {{ savedLocation.lat | number:'1.4-4' }}, Lon: {{ savedLocation.lon | number:'1.4-4' }}</p>
-          <ion-button expand="block" color="danger" (click)="clearSavedLocation()">
+          <p class="location-coords">
+            Lat: {{ savedLocation.lat | number:'1.4-4' }}, Lon: {{
+            savedLocation.lon | number:'1.4-4' }}
+          </p>
+          <ion-button
+            expand="block"
+            color="danger"
+            (click)="clearSavedLocation()"
+          >
             <ion-icon slot="start" name="trash-outline"></ion-icon>
             Clear Saved Location
           </ion-button>
         </div>
         <div *ngIf="!savedLocation" class="no-location">
           <p>No location saved</p>
-          <p class="hint">Use the location button in the Weather tab to save your location</p>
+          <p class="hint">
+            Use the location button in the Weather tab to save your location
+          </p>
         </div>
       </ion-card-content>
     </ion-card>

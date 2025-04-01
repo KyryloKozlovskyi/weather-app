@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ToastController } from '@ionic/angular';
@@ -22,10 +22,12 @@ import {
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule],
 })
-export class Tab3Page implements OnInit {
+export class Tab3Page implements OnInit, OnDestroy {
   temperatureUnit = 'metric'; // Default to metric
-  darkMode = 'system'; // Default to system
+  darkMode: string = 'system'; // Default to system
   savedLocation: any = null;
+  private darkModeMediaQuery: MediaQueryList | null = null;
+  private darkModeChangeHandler: ((e: MediaQueryListEvent) => void) | null = null;
 
   constructor(
     private locationService: LocationService,
@@ -50,11 +52,16 @@ export class Tab3Page implements OnInit {
     // Get current temperature unit from the service
     this.temperatureUnit = this.settingsService.currentTemperatureUnit;
 
-    // Get theme settings
-    const savedTheme = localStorage.getItem('darkMode');
-    if (savedTheme) {
-      this.darkMode = savedTheme;
-      this.applyTheme(this.darkMode);
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('darkMode') || 'system';
+    this.darkMode = savedTheme;
+    this.applyTheme(this.darkMode);
+  }
+
+  ngOnDestroy() {
+    // Clean up event listener to prevent memory leaks
+    if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
+      this.darkModeMediaQuery.removeEventListener('change', this.darkModeChangeHandler);
     }
   }
 
@@ -100,7 +107,29 @@ export class Tab3Page implements OnInit {
       document.body.classList.add('dark');
     } else if (theme === 'light') {
       document.body.classList.add('light');
+    } else if (theme === 'system') {
+      // Clean up previous listener if exists
+      if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
+        this.darkModeMediaQuery.removeEventListener('change', this.darkModeChangeHandler);
+      }
+
+      // Check system preference
+      this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      if (this.darkModeMediaQuery.matches) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.add('light');
+      }
+
+      // Listen for changes in system preference
+      this.darkModeChangeHandler = (e) => {
+        if (this.darkMode === 'system') {
+          document.body.classList.remove('dark', 'light');
+          document.body.classList.add(e.matches ? 'dark' : 'light');
+        }
+      };
+
+      this.darkModeMediaQuery.addEventListener('change', this.darkModeChangeHandler);
     }
-    // If 'system', do nothing and let the OS decide
   }
 }
