@@ -44,7 +44,7 @@ ion-header {
     flex: 1;
     --background: rgba(255, 255, 255, 0.2);
     --color: var(--ion-color-light);
-    --placeholder-color: rgba(255, 255, 255, 0.6);
+    --placeholder-color: rgba(var(--ion-color-light-rgb), 0.8);
     --icon-color: var(--ion-color-light);
     --clear-button-color: var(--ion-color-light);
     --border-radius: 12px;
@@ -58,6 +58,17 @@ ion-header {
 
   .location-button {
     margin-right: 8px;
+    --background: rgba(255, 255, 255, 0.2);
+    --color: var(--ion-color-light);
+    --border-radius: 12px;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    height: 44px;
+    width: 44px;
+  }
+
+  .save-button {
+    margin-left: 8px;
     --background: rgba(255, 255, 255, 0.2);
     --color: var(--ion-color-light);
     --border-radius: 12px;

@@ -27,10 +27,15 @@ import {
   contractOutline,
   cloudOutline,
   locationOutline,
+  bookmarkOutline, // Add this
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
-import { AlertController, LoadingController } from '@ionic/angular/standalone';
+import {
+  AlertController,
+  LoadingController,
+  ToastController,
+} from '@ionic/angular/standalone';
 import { LocationService } from '../services/location.service';
 import { SettingsService } from '../services/settings.service';
 import { Subscription } from 'rxjs';
@@ -75,6 +80,7 @@ export class Tab2Page {
   public isLoading: boolean = false;
   private unitSubscription: Subscription | undefined;
   private locationSubscription: Subscription | undefined;
+  public isCustomSearch: boolean = false; // Flag to track if we're showing a search result
 
   // Injecting the services
   constructor(
@@ -84,7 +90,8 @@ export class Tab2Page {
     private alertController: AlertController,
     private locationService: LocationService,
     private loadingController: LoadingController,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private toastController: ToastController
   ) {
     addIcons({
       compassOutline,
@@ -92,6 +99,7 @@ export class Tab2Page {
       contractOutline,
       cloudOutline,
       locationOutline,
+      bookmarkOutline, // Add this
     });
   }
 
@@ -102,12 +110,12 @@ export class Tab2Page {
       this.loadFromSavedLocation(savedLocation);
     }
 
-    // Subscribe to location changes
+    // Subscribe to location changes - only update if not in custom search mode
     this.locationSubscription = this.locationService.locationChanged$.subscribe(
       (location) => {
-        if (location) {
+        if (location && !this.isCustomSearch) {
           this.loadFromSavedLocation(location);
-        } else {
+        } else if (!location && !this.isCustomSearch) {
           // Handle case where location was cleared
           this.showContent = false;
           this.lat = null;
@@ -141,6 +149,7 @@ export class Tab2Page {
 
   // Load data from a saved location
   async loadFromSavedLocation(location: any) {
+    this.isCustomSearch = false; // Reset the custom search flag
     this.lat = location.lat;
     this.lon = location.lon;
     this.geoRevResp = [{ name: location.name }];
@@ -176,6 +185,8 @@ export class Tab2Page {
 
       if (locationData && locationData[0]) {
         const name = locationData[0].name;
+        // Save to LocationService but don't mark as custom search
+        this.isCustomSearch = false;
         this.locationService.saveLastLocation(this.lat, this.lon, name);
         this.geoRevResp = locationData;
       } else {
@@ -225,14 +236,8 @@ export class Tab2Page {
           await this.getReverseGeocoding(this.lat, this.lon);
           await this.getWeatherData(this.lat, this.lon);
 
-          // Save this location for future use
-          if (this.geoRevResp && this.geoRevResp[0]) {
-            this.locationService.saveLastLocation(
-              this.lat,
-              this.lon,
-              this.geoRevResp[0].name
-            );
-          }
+          // Mark this as a custom search - don't save to LocationService
+          this.isCustomSearch = true;
         } else {
           // Handle the case when response is undefined or empty
           console.error('Error in geocoding service: Check your input.');
@@ -313,5 +318,28 @@ export class Tab2Page {
 
   getRainfallUnit(): string {
     return this.settingsService.getRainfallUnit();
+  }
+
+  // Save the currently displayed location as the default
+  saveAsDefault() {
+    if (this.lat && this.lon && this.geoRevResp && this.geoRevResp[0]) {
+      const name = this.geoRevResp[0].name;
+      this.locationService.saveLastLocation(this.lat, this.lon, name);
+      this.isCustomSearch = false; // No longer a custom search since it's the default
+
+      this.showToast('Location saved as default');
+    }
+  }
+
+  // Add this helper method for toast messages
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom',
+      color: 'success',
+      cssClass: 'toast-message',
+    });
+    await toast.present();
   }
 }
