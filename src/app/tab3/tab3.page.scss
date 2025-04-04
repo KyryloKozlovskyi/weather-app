@@ -30,8 +30,9 @@ ion-toolbar {
 
 ion-header {
   ion-toolbar {
-    --background: rgba(var(--ion-color-primary-rgb), 0.8);
+    --background: var(--header-background); // Change this line
     --border-color: transparent;
+    --color: var(--header-text-color); // Add this line
   }
 }
 

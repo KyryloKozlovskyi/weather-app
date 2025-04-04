@@ -14,6 +14,13 @@
 
   --primary-gradient-start: #4facfe;
   --primary-gradient-end: #00f2fe;
+  
+  /* Add these variables for light theme */
+  --header-background: #4285f4;
+  --header-text-color: #ffffff;
+  --tab-bar-background: #4285f4;
+  --tab-bar-text-color: #ffffff;
+  --tab-bar-text-color-selected: #ffffff;
 }
 
 /* Dark mode when .dark class is added to body */
@@ -23,15 +30,17 @@
   --ion-text-color: #ffffff;
   --ion-text-color-rgb: 255, 255, 255;
 
-  --ion-card-background: rgba(
-    60,
-    60,
-    70,
-    0.6
-  ); /* Lighter and more transparent */
+  --ion-card-background: rgba(60, 60, 70, 0.6);
   --card-text-color: #ffffff;
   --backdrop-opacity: 0.9;
 
   --primary-gradient-start: #243949;
   --primary-gradient-end: #517fa4;
+  
+  /* Add these variables for dark theme */
+  --header-background: #1f1f1f;
+  --header-text-color: #ffffff;
+  --tab-bar-background: #1f1f1f;
+  --tab-bar-text-color: #b0b0b0;
+  --tab-bar-text-color-selected: #ffffff;
 }
