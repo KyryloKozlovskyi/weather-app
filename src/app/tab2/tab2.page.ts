@@ -189,6 +189,8 @@ export class Tab2Page {
     const loading = await this.loadingController.create({
       message: 'Getting your location...',
       spinner: 'bubbles',
+      backdropDismiss: false,
+      keyboardClose: false,
     });
     await loading.present();
     this.isLoading = true;
@@ -233,8 +235,8 @@ export class Tab2Page {
       });
       await alert.present();
     } finally {
-      loading.dismiss();
       this.isLoading = false;
+      await loading.dismiss();
     }
   }
 

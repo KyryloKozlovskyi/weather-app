@@ -14,7 +14,7 @@ import {
   IonButton,
 } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { addIcons } from 'ionicons'; // Import from 'ionicons', not 'ionicons/icons'
+import { addIcons } from 'ionicons';
 import { cloudOfflineOutline } from 'ionicons/icons';
 import { WeatherService } from '../services/weather.service';
 import { LocationService } from '../services/location.service';
@@ -39,7 +39,7 @@ import { Subscription } from 'rxjs';
     IonChip,
     IonLabel,
     IonIcon,
-    IonButton, // Add to component imports
+    IonButton,
   ],
 })
 export class Tab1Page implements OnInit, OnDestroy {
@@ -51,13 +51,13 @@ export class Tab1Page implements OnInit, OnDestroy {
   private locationSubscription: Subscription | undefined;
 
   constructor(
-    public weatherService: WeatherService, // Change to public
+    public weatherService: WeatherService,
     private locationService: LocationService,
     private reverseGeocodingService: ReverseGeocodingService,
     private settingsService: SettingsService,
     private toastController: ToastController
   ) {
-    addIcons({ cloudOfflineOutline }); // Re-add this line
+    addIcons({ cloudOfflineOutline });
   }
 
   ngOnInit() {
@@ -70,6 +70,22 @@ export class Tab1Page implements OnInit, OnDestroy {
 
     // Initial data load
     this.loadInitialData();
+
+    // Subscribe to location changes
+    this.locationSubscription = this.locationService.locationChanged$.subscribe(
+      (location) => {
+        if (location) {
+          this.location = location;
+          this.loadWeatherData();
+          this.showToast(`Weather updated for ${location.name}`);
+        } else {
+          // Handle case where location was cleared
+          this.loading = false;
+          this.error = 'No location selected';
+          this.location = null;
+        }
+      }
+    );
   }
 
   ngOnDestroy() {

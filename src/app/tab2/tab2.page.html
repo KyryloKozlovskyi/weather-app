@@ -1,7 +1,7 @@
 <!-- Header -->
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Weather</ion-title>
+    <ion-title>Weather Forecast</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -44,8 +44,9 @@
         <div class="date" *ngIf="resp.current">
           {{ resp.current.dt * 1000 | date:'string' }}
         </div>
-        <div class="temperature" *ngIf="resp.current">
-          {{ resp.current.temp | number: '1.0-0' }}{{ getUnitSymbol() }}
+        <div class="temperature" *ngIf="resp.daily">
+          {{ resp.daily[0].temp.max | number: '1.0-0' }} / {{
+          resp.daily[0].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
         </div>
         <div class="icon" *ngIf="resp.current">
           <img
@@ -61,8 +62,8 @@
     </ion-grid>
 
     <!-- Weather Conditions Grid -->
-    <div class="current">Current conditions</div>
-    <ion-grid>
+    <div class="forecastdivider">Current conditions</div>
+    <ion-grid class="conditions-grid">
       <ion-row>
         <ion-col size="6">
           <div class="conditions">
