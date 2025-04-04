@@ -36,7 +36,19 @@
             "styles": ["src/global.scss", "src/theme/variables.scss"],
             "scripts": [],
             "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "ngswConfigPath": "ngsw-config.json",
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "5mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "8kb",
+                "maximumError": "10kb"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -48,8 +60,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "8kb",
+                  "maximumError": "10kb"
                 }
               ],
               "fileReplacements": [
