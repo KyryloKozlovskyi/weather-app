@@ -8,6 +8,8 @@ import {
   IonRefresherContent,
   IonButton,
   IonSpinner,
+  IonChip, // Add this import
+  IonLabel, // Add this import
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { IonSearchbar } from '@ionic/angular/standalone';
@@ -27,7 +29,8 @@ import {
   contractOutline,
   cloudOutline,
   locationOutline,
-  bookmarkOutline, // Add this
+  bookmarkOutline,
+  cloudOfflineOutline, // Add this icon
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
@@ -67,6 +70,8 @@ import { Subscription } from 'rxjs';
     RainPipe,
     IonButton,
     IonSpinner,
+    IonChip, // Add this to your imports
+    IonLabel, // Add this to your imports
   ],
 })
 export class Tab2Page {
@@ -81,11 +86,12 @@ export class Tab2Page {
   private unitSubscription: Subscription | undefined;
   private locationSubscription: Subscription | undefined;
   public isCustomSearch: boolean = false; // Flag to track if we're showing a search result
+  public isOffline: boolean = false; // Add offline status flag
 
   // Injecting the services
   constructor(
     private geocodingService: GeocodingService,
-    private weatherService: WeatherService,
+    public weatherService: WeatherService, // Make it public so template can access it
     private reverseWeatherService: ReverseGeocodingService,
     private alertController: AlertController,
     private locationService: LocationService,
@@ -99,7 +105,8 @@ export class Tab2Page {
       contractOutline,
       cloudOutline,
       locationOutline,
-      bookmarkOutline, // Add this
+      bookmarkOutline,
+      cloudOfflineOutline, // Add the offline icon
     });
   }
 
@@ -133,6 +140,22 @@ export class Tab2Page {
         }
       }
     );
+
+    // Add network status monitoring
+    window.addEventListener('online', () => {
+      this.isOffline = false;
+      // Refresh data if we're back online and have coordinates
+      if (this.lat && this.lon) {
+        this.getWeatherData(this.lat, this.lon);
+      }
+    });
+
+    window.addEventListener('offline', () => {
+      this.isOffline = true;
+    });
+
+    // Check initial network status
+    this.isOffline = !navigator.onLine;
   }
 
   ngOnDestroy() {
@@ -145,6 +168,10 @@ export class Tab2Page {
     if (this.locationSubscription) {
       this.locationSubscription.unsubscribe();
     }
+
+    // Clean up event listeners
+    window.removeEventListener('online', () => (this.isOffline = false));
+    window.removeEventListener('offline', () => (this.isOffline = true));
   }
 
   // Load data from a saved location
@@ -286,6 +313,17 @@ export class Tab2Page {
 
   // IonRefresher. Refreshes the page with the new api call
   async handleRefresh(event: any) {
+    // First check if we're offline
+    if (!navigator.onLine) {
+      this.isOffline = true;
+      // Show a toast to inform the user
+      this.showToast('You are offline. Showing cached data.');
+      event.target.complete();
+      return;
+    }
+
+    this.isOffline = false;
+
     setTimeout(() => {
       if (this.userInput == null && !this.lat && !this.lon) {
         console.log('Refreshing...');
@@ -295,14 +333,21 @@ export class Tab2Page {
       } else {
         console.log('Refreshing...');
         // Current
-        this.weatherService
-          .getWeatherData(this.lat, this.lon)
-          .subscribe((response) => {
+        this.weatherService.getWeatherData(this.lat, this.lon).subscribe(
+          (response) => {
             this.resp = response;
-            console.log(this.resp); // Logs json to the console
+            console.log(this.resp);
             console.log('Done current.');
             event.target.complete();
-          });
+          },
+          (error) => {
+            console.error('Error refreshing weather data:', error);
+            // Still complete the refresh even if there's an error
+            event.target.complete();
+            // Show error toast
+            this.showToast('Error refreshing data. Check your connection.');
+          }
+        );
       }
     }, 2000);
   }

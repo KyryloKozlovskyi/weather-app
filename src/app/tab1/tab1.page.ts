@@ -1,207 +1,224 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { IonicModule, LoadingController } from '@ionic/angular';
-import { switchMap, catchError } from 'rxjs/operators';
-import { of, Subscription } from 'rxjs';
-
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonRefresher,
+  IonRefresherContent,
+  IonSpinner,
+  IonChip,
+  IonLabel,
+  IonIcon,
+  ToastController,
+  IonButton,
+} from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { addIcons } from 'ionicons'; // Import from 'ionicons', not 'ionicons/icons'
+import { cloudOfflineOutline } from 'ionicons/icons';
 import { WeatherService } from '../services/weather.service';
 import { LocationService } from '../services/location.service';
-import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
-import { WindPipe } from '../pipes/wind.pipe';
-import { DayPipe } from '../pipes/day.pipe';
-import { RainPipe } from '../pipes/rain.pipe';
 import { SettingsService } from '../services/settings.service';
+import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, DatePipe, DecimalPipe],
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonRefresher,
+    IonRefresherContent,
+    IonSpinner,
+    IonChip,
+    IonLabel,
+    IonIcon,
+    IonButton, // Add to component imports
+  ],
 })
 export class Tab1Page implements OnInit, OnDestroy {
-  currentWeather: any = null;
-  location: any = null;
-  error: string = '';
-  loading: boolean = true;
-  showContent: boolean = true;
-  private unitSubscription: Subscription | undefined;
+  public isOffline: boolean = false;
+  public currentWeather: any;
+  public loading: boolean = true;
+  public error: string | null = null;
+  public location: any;
   private locationSubscription: Subscription | undefined;
 
   constructor(
-    private weatherService: WeatherService,
+    public weatherService: WeatherService, // Change to public
     private locationService: LocationService,
     private reverseGeocodingService: ReverseGeocodingService,
-    private loadingController: LoadingController,
-    private settingsService: SettingsService
-  ) {}
+    private settingsService: SettingsService,
+    private toastController: ToastController
+  ) {
+    addIcons({ cloudOfflineOutline }); // Re-add this line
+  }
 
   ngOnInit() {
-    // Initial load from saved location
-    const savedLocation = this.locationService.getLastLocation();
-    if (savedLocation) {
-      this.loadFromSavedLocation(savedLocation);
-    }
+    // Add network status monitoring
+    window.addEventListener('online', this.handleOnlineStatusChange);
+    window.addEventListener('offline', this.handleOnlineStatusChange);
 
-    // Subscribe to location changes
-    this.locationSubscription = this.locationService.locationChanged$.subscribe(
-      (location) => {
-        if (location) {
-          this.loadFromSavedLocation(location);
-        } else {
-          // Handle case where location was cleared
-          this.clearWeatherData();
-        }
-      }
-    );
+    // Check initial network status
+    this.isOffline = !navigator.onLine;
 
-    this.loadCurrentLocation();
-
-    // Subscribe to unit changes to refresh weather data
-    this.unitSubscription = this.settingsService.temperatureUnit$.subscribe(
-      () => {
-        if (this.location) {
-          this.loadWeatherData(this.location.lat, this.location.lon);
-        }
-      }
-    );
+    // Initial data load
+    this.loadInitialData();
   }
 
   ngOnDestroy() {
-    if (this.unitSubscription) {
-      this.unitSubscription.unsubscribe();
-    }
+    // Clean up event listeners
+    window.removeEventListener('online', this.handleOnlineStatusChange);
+    window.removeEventListener('offline', this.handleOnlineStatusChange);
 
     if (this.locationSubscription) {
       this.locationSubscription.unsubscribe();
     }
   }
 
-  async loadCurrentLocation() {
-    const loading = await this.loadingController.create({
-      message: 'Getting your location...',
-      spinner: 'bubbles',
-    });
-    await loading.present();
+  // Handle online/offline status changes
+  private handleOnlineStatusChange = () => {
+    const wasOffline = this.isOffline;
+    this.isOffline = !navigator.onLine;
 
-    // First check if we have a saved location
+    if (wasOffline && !this.isOffline) {
+      // Just came back online - refresh data
+      this.showToast('You are back online. Refreshing data...');
+      this.loadWeatherData();
+    } else if (!wasOffline && this.isOffline) {
+      // Just went offline
+      this.showToast('You are offline. Showing cached data.');
+    }
+  };
+
+  // Helper method for toast messages
+  async showToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom',
+      color: this.isOffline ? 'warning' : 'success',
+      cssClass: 'toast-message',
+    });
+    await toast.present();
+  }
+
+  // Initial data loading
+  private loadInitialData() {
+    this.loading = true;
+    this.error = null;
+
+    // Load saved location if available
     const savedLocation = this.locationService.getLastLocation();
     if (savedLocation) {
       this.location = savedLocation;
-      this.loadWeatherData(savedLocation.lat, savedLocation.lon);
-      loading.dismiss();
+      this.loadWeatherData();
+    } else {
+      // Try to get current location
+      this.getCurrentLocation();
+    }
+  }
+
+  // Get current location
+  async getCurrentLocation() {
+    try {
+      const position = await this.locationService
+        .getCurrentPosition()
+        .toPromise();
+
+      if (!position) {
+        throw new Error('Unable to get current position');
+      }
+
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      // Get location name using reverse geocoding
+      const locationData = await this.reverseGeocodingService
+        .getReverseGeocoding(lat, lon)
+        .toPromise();
+
+      if (locationData && locationData[0]) {
+        this.location = {
+          name: locationData[0].name,
+          lat: lat,
+          lon: lon,
+        };
+
+        this.locationService.saveLastLocation(lat, lon, locationData[0].name);
+        this.loadWeatherData();
+      }
+    } catch (error) {
+      console.error('Error getting location:', error);
+      this.loading = false;
+      this.error =
+        'Unable to get your location. Please check your permissions.';
+    }
+  }
+
+  // Load weather data
+  loadWeatherData() {
+    if (!this.location) {
+      this.loading = false;
+      this.error = 'No location selected';
       return;
     }
 
-    // Otherwise use device geolocation
-    this.locationService
-      .getCurrentPosition()
-      .pipe(
-        switchMap((position) => {
-          if (!position) {
-            throw new Error('Unable to get current position');
-          }
-
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-
-          // Get location name using reverse geocoding
-          return this.reverseGeocodingService
-            .getReverseGeocoding(lat, lon)
-            .pipe(
-              switchMap((locationData) => {
-                if (locationData && locationData[0]) {
-                  const name = locationData[0].name;
-                  this.location = { lat, lon, name };
-                  this.locationService.saveLastLocation(lat, lon, name);
-
-                  // Get weather data
-                  return this.weatherService.getWeatherData(lat, lon);
-                }
-                throw new Error('Location not found');
-              }),
-              catchError((error) => {
-                console.error('Error in reverse geocoding', error);
-                // If reverse geocoding fails, still try to get weather with coordinates
-                this.location = { lat, lon, name: 'Current Location' };
-                return this.weatherService.getWeatherData(lat, lon);
-              })
-            );
-        }),
-        catchError((error) => {
-          this.error = `Error: ${
-            error.message || 'Failed to load weather data'
-          }`;
-          loading.dismiss();
-          return of(null);
-        })
-      )
-      .subscribe({
-        next: (data) => {
-          if (data) {
-            this.currentWeather = data;
-            this.loading = false;
-          }
-          loading.dismiss();
-        },
-        error: (err) => {
-          console.error('Error in weather subscription', err);
-          this.error = 'Failed to retrieve weather data';
-          this.loading = false;
-          loading.dismiss();
-        },
-      });
-  }
-
-  loadWeatherData(lat: number, lon: number) {
     this.loading = true;
-    this.weatherService.getWeatherData(lat, lon).subscribe({
-      next: (data) => {
-        this.currentWeather = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.error = 'Failed to load weather data';
-        this.loading = false;
-        console.error('Error loading weather data', error);
-      },
-    });
+    this.error = null;
+
+    this.weatherService
+      .getWeatherData(this.location.lat, this.location.lon)
+      .subscribe(
+        (data) => {
+          this.currentWeather = data;
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error loading weather data:', error);
+          this.loading = false;
+          if (this.isOffline) {
+            this.error = 'You are offline and no cached data is available';
+          } else {
+            this.error = 'Unable to load weather data. Please try again.';
+          }
+        }
+      );
   }
 
-  refreshWeather(event: any) {
-    if (this.location) {
-      this.loadWeatherData(this.location.lat, this.location.lon);
-    } else {
-      this.loadCurrentLocation();
-    }
-    setTimeout(() => {
+  // Handle refresh
+  async handleRefresh(event: any) {
+    if (!navigator.onLine) {
+      this.isOffline = true;
+      this.showToast('You are offline. Showing cached data.');
       event.target.complete();
-    }, 2000);
+      return;
+    }
+
+    this.isOffline = false;
+
+    try {
+      await this.loadWeatherData();
+      event.target.complete();
+    } catch (error) {
+      console.error('Error refreshing weather data:', error);
+      this.showToast('Error refreshing data. Check your connection.');
+      event.target.complete();
+    }
   }
 
+  // Helper methods for weather display
   getWeatherIcon(iconCode: string): string {
-    return this.weatherService.getWeatherIconUrl(iconCode);
+    return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
   }
 
   getUnitSymbol(): string {
     return this.settingsService.getUnitSymbol();
-  }
-
-  getWindSpeedUnit(): string {
-    return this.settingsService.getWindSpeedUnit();
-  }
-
-  clearWeatherData() {
-    // Clear any displayed weather data
-    this.showContent = false;
-    this.currentWeather = null;
-    this.location = null;
-    this.loading = false;
-    this.error = '';
-  }
-
-  private loadFromSavedLocation(location: any) {
-    this.location = location;
-    this.loadWeatherData(location.lat, location.lon);
   }
 }

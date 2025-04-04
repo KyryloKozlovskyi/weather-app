@@ -5,9 +5,14 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-refresher slot="fixed" (ionRefresh)="refreshWeather($event)">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <ion-chip *ngIf="isOffline" color="warning" class="offline-chip">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    <ion-label>Offline Mode - Showing Cached Data</ion-label>
+  </ion-chip>
 
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -27,7 +32,7 @@
       size="large"
     ></ion-icon>
     <p>{{ error }}</p>
-    <ion-button (click)="loadCurrentLocation()">Retry</ion-button>
+    <ion-button (click)="getCurrentLocation()">Retry</ion-button>
   </div>
 
   <div

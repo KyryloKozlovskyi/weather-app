@@ -250,3 +250,11 @@ ion-spinner {
 ion-refresher {
   --ion-text-color: var(--ion-color-light);
 }
+
+.offline-chip {
+  margin: 10px auto;
+  display: flex;
+  justify-content: center;
+  background-color: rgba(255, 152, 0, 0.2);
+  border: 1px solid var(--ion-color-warning);
+}
