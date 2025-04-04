@@ -382,7 +382,7 @@ export class Tab2Page {
       message: message,
       duration: 2000,
       position: 'bottom',
-      color: 'success',
+      color: this.isOffline ? 'warning' : 'success',
       cssClass: 'toast-message',
     });
     await toast.present();
