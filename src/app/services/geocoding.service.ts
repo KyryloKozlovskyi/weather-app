@@ -12,7 +12,7 @@ export class GeocodingService {
   // Get geocoding data of the city
   getGeocoding(city: string): Observable<any> {
     let apiKey = 'c213bf7641522d502751e12a087b3d5d'; // API key
-    let apiCall = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`; // API call
+    let apiCall = `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`; // API call
 
     console.log(`[GeocodingService] Making API call to: ${apiCall}`);
 

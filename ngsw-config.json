@@ -32,13 +32,22 @@
       "name": "weather-api",
       "urls": [
         "https://api.openweathermap.org/data/**",
-        "http://api.openweathermap.org/geo/**"
+        "https://api.openweathermap.org/geo/**"
       ],
       "cacheConfig": {
-        "strategy": "freshness",
+        "strategy": "performance",
         "maxSize": 100,
         "maxAge": "1h",
         "timeout": "10s"
+      }
+    },
+    {
+      "name": "weather-icons",
+      "urls": ["https://openweathermap.org/img/wn/**"],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 50,
+        "maxAge": "7d"
       }
     }
   ]

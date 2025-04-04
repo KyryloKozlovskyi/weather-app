@@ -12,7 +12,7 @@ export class ReverseGeocodingService {
   // Get reverse geocoding data of the city
   getReverseGeocoding(lat: number, lon: number): Observable<any> {
     let apiKey = 'c213bf7641522d502751e12a087b3d5d'; // API key
-    let apiCall = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`; // API call
+    let apiCall = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`; // API call
 
     console.log(`[ReverseGeocodingService] Making API call to: ${apiCall}`);
 
