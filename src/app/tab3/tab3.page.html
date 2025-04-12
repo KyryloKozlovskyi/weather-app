@@ -56,17 +56,17 @@
             <ion-item>
               <ion-icon slot="start" name="sunny-outline"></ion-icon>
               <ion-label>Light</ion-label>
-              <ion-radio value="light"></ion-radio>
+              <ion-radio slot="end" value="light"></ion-radio>
             </ion-item>
             <ion-item>
               <ion-icon slot="start" name="moon-outline"></ion-icon>
               <ion-label>Dark</ion-label>
-              <ion-radio value="dark"></ion-radio>
+              <ion-radio slot="end" value="dark"></ion-radio>
             </ion-item>
             <ion-item>
               <ion-icon slot="start" name="settings-outline"></ion-icon>
               <ion-label>System Default</ion-label>
-              <ion-radio value="system"></ion-radio>
+              <ion-radio slot="end" value="system"></ion-radio>
             </ion-item>
           </ion-radio-group>
         </ion-list>
@@ -138,6 +138,23 @@
             Use Current Location
           </ion-button>
         </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Cache Management Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="refresh-outline"></ion-icon>
+          Cache Management
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Clear cached weather data to fetch fresh information.</p>
+        <ion-button expand="block" color="warning" (click)="clearCache()">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Clear App Cache
+        </ion-button>
       </ion-card-content>
     </ion-card>
 

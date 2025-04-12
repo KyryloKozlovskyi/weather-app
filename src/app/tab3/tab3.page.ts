@@ -1,7 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule, ToastController, AlertController, LoadingController } from '@ionic/angular';
+import {
+  IonicModule,
+  ToastController,
+  AlertController,
+  LoadingController,
+} from '@ionic/angular';
 import { LocationService } from '../services/location.service';
 import { SettingsService } from '../services/settings.service';
 import { GeocodingService } from '../services/geocoding.service';
@@ -42,7 +47,9 @@ export class Tab3Page implements OnInit, OnDestroy {
     private geocodingService: GeocodingService,
     private reverseGeocodingService: ReverseGeocodingService,
     private alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
   ) {
     addIcons({
       informationCircleOutline,
@@ -118,8 +125,10 @@ export class Tab3Page implements OnInit, OnDestroy {
     await loading.present();
 
     try {
-      const position = await this.locationService.getCurrentPosition().toPromise();
-      
+      const position = await this.locationService
+        .getCurrentPosition()
+        .toPromise();
+
       if (!position) {
         throw new Error('Unable to get current position');
       }
@@ -128,8 +137,10 @@ export class Tab3Page implements OnInit, OnDestroy {
       const lon = position.coords.longitude;
 
       // Get location name using reverse geocoding
-      const locationData = await this.reverseGeocodingService.getReverseGeocoding(lat, lon).toPromise();
-      
+      const locationData = await this.reverseGeocodingService
+        .getReverseGeocoding(lat, lon)
+        .toPromise();
+
       if (locationData && locationData[0]) {
         const name = locationData[0].name;
         this.locationService.saveLastLocation(lat, lon, name);
@@ -144,7 +155,8 @@ export class Tab3Page implements OnInit, OnDestroy {
       console.error('Error getting location:', error);
       const alert = await this.alertController.create({
         header: 'Error',
-        message: 'Unable to get your current location. Please check your permissions.',
+        message:
+          'Unable to get your current location. Please check your permissions.',
         buttons: ['OK'],
       });
       await alert.present();
@@ -159,31 +171,38 @@ export class Tab3Page implements OnInit, OnDestroy {
       this.showToast('Please enter a city name');
       return;
     }
-    
+
     const loading = await this.loadingController.create({
       message: 'Searching for location...',
       spinner: 'bubbles',
     });
     await loading.present();
-    
+
     try {
-      const results = await this.geocodingService.getGeocoding(this.cityInput).toPromise();
-      
+      const results = await this.geocodingService
+        .getGeocoding(this.cityInput)
+        .toPromise();
+
       if (results && results.length > 0) {
         const location = results[0];
         // Save to LocationService which other components will read from
-        this.locationService.saveLastLocation(location.lat, location.lon, location.name);
-        this.savedLocation = { 
-          lat: location.lat, 
-          lon: location.lon, 
-          name: location.name 
+        this.locationService.saveLastLocation(
+          location.lat,
+          location.lon,
+          location.name
+        );
+        this.savedLocation = {
+          lat: location.lat,
+          lon: location.lon,
+          name: location.name,
         };
         this.cityInput = ''; // Clear input
         this.showToast(`Location updated to ${location.name}`);
       } else {
         const alert = await this.alertController.create({
           header: 'Location Not Found',
-          message: 'Could not find the city you entered. Please try again with a different name.',
+          message:
+            'Could not find the city you entered. Please try again with a different name.',
           buttons: ['OK'],
         });
         await alert.present();
@@ -198,6 +217,49 @@ export class Tab3Page implements OnInit, OnDestroy {
       await alert.present();
     } finally {
       loading.dismiss();
+    }
+  }
+
+  // Clear cache
+  async clearCache() {
+    // Show loading indicator
+    const loading = await this.loadingController.create({
+      message: 'Clearing cache...',
+      duration: 1000,
+    });
+    await loading.present();
+
+    try {
+      // Clear the caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames
+            .filter(
+              (name) =>
+                name.includes('weather-app') || name.includes('weather-api')
+            )
+            .map((name) => caches.delete(name))
+        );
+      }
+
+      // Show success message
+      const toast = await this.toastController.create({
+        message: 'Cache cleared successfully',
+        duration: 2000,
+        position: 'bottom',
+        color: 'success',
+      });
+      await toast.present();
+    } catch (error) {
+      // Show error message
+      const toast = await this.toastController.create({
+        message: 'Failed to clear cache: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        duration: 3000,
+        position: 'bottom',
+        color: 'danger',
+      });
+      await toast.present();
     }
   }
 
