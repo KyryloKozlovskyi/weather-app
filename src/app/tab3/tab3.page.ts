@@ -225,22 +225,52 @@ export class Tab3Page implements OnInit, OnDestroy {
     // Show loading indicator
     const loading = await this.loadingController.create({
       message: 'Clearing cache...',
-      duration: 1000,
+      duration: 1500,
     });
     await loading.present();
 
     try {
-      // Clear the caches
+      // Clear any localStorage cached data (except theme preference and units)
+      const themePreference = localStorage.getItem('darkMode');
+      const temperatureUnit = localStorage.getItem('temperatureUnit');
+      
+      // Save the important settings
+      const savedSettings = {
+        darkMode: themePreference,
+        temperatureUnit: temperatureUnit
+      };
+      
+      // Clear all localStorage
+      localStorage.clear();
+      
+      // Restore the important settings
+      if (savedSettings.darkMode) {
+        localStorage.setItem('darkMode', savedSettings.darkMode);
+      }
+      if (savedSettings.temperatureUnit) {
+        localStorage.setItem('temperatureUnit', savedSettings.temperatureUnit);
+      }
+
+      // Clear the browser caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(
           cacheNames
-            .filter(
-              (name) =>
-                name.includes('weather-app') || name.includes('weather-api')
+            .filter((name) => 
+              name.includes('weather-app') || 
+              name.includes('weather-api') || 
+              name.includes('ngsw')
             )
             .map((name) => caches.delete(name))
         );
+      }
+
+      // Refresh service worker if available
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let registration of registrations) {
+          await registration.update();
+        }
       }
 
       // Show success message
