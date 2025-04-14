@@ -90,14 +90,14 @@ export class Tab2Page {
 
   // Injecting the services
   constructor(
+    private weatherService: WeatherService,
     private geocodingService: GeocodingService,
-    public weatherService: WeatherService, // Make it public so template can access it
     private reverseWeatherService: ReverseGeocodingService,
-    private alertController: AlertController,
-    private locationService: LocationService,
     private loadingController: LoadingController,
+    private toastController: ToastController,
+    private alertController: AlertController, // Add this if not already present
     private settingsService: SettingsService,
-    private toastController: ToastController
+    private locationService: LocationService
   ) {
     addIcons({
       compassOutline,
@@ -388,5 +388,39 @@ export class Tab2Page {
       cssClass: 'toast-message',
     });
     await toast.present();
+  }
+
+  // Reset to the saved location
+  async resetToSavedLocation() {
+    const savedLocation = this.locationService.getLastLocation();
+    
+    if (savedLocation) {
+      // Show loading indicator
+      const loading = await this.loadingController.create({
+        message: 'Loading saved location...',
+        spinner: 'bubbles',
+        backdropDismiss: false,
+        keyboardClose: false,
+      });
+      await loading.present();
+      
+      try {
+        this.loadFromSavedLocation(savedLocation);
+        this.showToast(`Reset to ${savedLocation.name}`);
+      } catch (error) {
+        console.error('Error resetting to saved location:', error);
+        this.showToast('Error resetting to saved location');
+      } finally {
+        loading.dismiss();
+      }
+    } else {
+      // No saved location found
+      const alert = await this.alertController.create({
+        header: 'No Saved Location',
+        message: 'There is no saved location to reset to. Please save a location first.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 }

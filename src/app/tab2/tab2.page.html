@@ -17,16 +17,14 @@
 
   <!-- Search Container -->
   <div class="search-container">
-    <ion-button class="location-button" (click)="getCurrentLocation()">
-      <ion-icon slot="icon-only" name="location-outline"></ion-icon>
+    <ion-button class="location-button" (click)="resetToSavedLocation()">
+      <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
     </ion-button>
     <ion-searchbar
       placeholder="Search city..."
       (keypress)="handleInput($event)"
       enterkeyhint="search"
     ></ion-searchbar>
-
-    <!-- Save button is already implemented -->
   </div>
 
   <!-- Loading Spinner -->
