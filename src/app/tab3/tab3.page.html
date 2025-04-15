@@ -213,15 +213,32 @@
       <ion-card-content>
         <p>Clear cached weather data to fetch fresh information.</p>
         <!-- Button for cache clearing functionality -->
-        <ion-button expand="block" color="warning" [disabled]="isOffline">
+        <ion-button
+          expand="block"
+          color="warning"
+          [disabled]="isOffline"
+          (click)="clearCache()"
+        >
+          <ion-icon slot="start" name="refresh-outline"></ion-icon>
+          Clear App Cache
         </ion-button>
       </ion-card-content>
     </ion-card>
 
-    <!-- About Section - Contains app information -->
+    <!-- About Section -->
     <ion-card>
-      <ion-card-header> </ion-card-header>
-      <ion-card-content> </ion-card-content>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="information-circle-outline"></ion-icon>
+          About
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Weather App</strong></p>
+        <p>Version 1.0.0</p>
+        <p>Weather data provided by OpenWeatherMap</p>
+        <small>© 2025 All Rights Reserved</small>
+      </ion-card-content>
     </ion-card>
   </div>
 </ion-content>
