@@ -3,44 +3,55 @@
 
 :root {
   /* Light mode variables */
-  --ion-background-color: #f4f5f8;
-  --ion-background-color-rgb: 244, 245, 248;
-  --ion-text-color: #000000;
-  --ion-text-color-rgb: 0, 0, 0;
+  /* Main app background and text colors */
+  --ion-background-color: #f4f5f8; // Light gray background
+  --ion-background-color-rgb: 244, 245, 248; // RGB values for background color
+  --ion-text-color: #000000; // Black text for maximum readability
+  --ion-text-color-rgb: 0, 0, 0; // RGB values for text color
 
-  --ion-card-background: rgba(255, 255, 255, 0.8);
-  --card-text-color: #000000;
-  --backdrop-opacity: 0.8;
+  /* Card and backdrop styling */
+  --ion-card-background: rgba(
+    255,
+    255,
+    255,
+    0.8
+  ); // Semi-transparent white cards
+  --card-text-color: #000000; // Black text on cards
+  --backdrop-opacity: 0.8; // 80% opacity for backdrops/overlays
 
-  --primary-gradient-start: #4facfe;
-  --primary-gradient-end: #00f2fe;
-  
-  /* Add these variables for light theme */
-  --header-background: #4285f4;
-  --header-text-color: #ffffff;
-  --tab-bar-background: #4285f4;
-  --tab-bar-text-color: #ffffff;
-  --tab-bar-text-color-selected: #ffffff;
+  /* Primary gradient colors for buttons and highlights */
+  --primary-gradient-start: #4facfe; // Blue start color
+  --primary-gradient-end: #00f2fe; // Cyan end color - creates a blue-to-cyan gradient
+
+  /* Header and tab bar styling */
+  --header-background: #4285f4; // Google blue for headers
+  --header-text-color: #ffffff; // White text in headers
+  --tab-bar-background: #4285f4; // Matching blue for tab bars
+  --tab-bar-text-color: #ffffff; // White text for tabs
+  --tab-bar-text-color-selected: #ffffff; // White text for selected tabs
 }
 
 /* Dark mode when .dark class is added to body */
 .dark {
-  --ion-background-color: #121212;
-  --ion-background-color-rgb: 18, 18, 18;
-  --ion-text-color: #ffffff;
-  --ion-text-color-rgb: 255, 255, 255;
+  /* Main app background and text colors - dark theme */
+  --ion-background-color: #121212; // Dark gray/near black background
+  --ion-background-color-rgb: 18, 18, 18; // RGB values for dark background
+  --ion-text-color: #ffffff; // White text for contrast
+  --ion-text-color-rgb: 255, 255, 255; // RGB values for white text
 
-  --ion-card-background: rgba(60, 60, 70, 0.6);
-  --card-text-color: #ffffff;
-  --backdrop-opacity: 0.9;
+  /* Card and backdrop styling - dark theme */
+  --ion-card-background: rgba(60, 60, 70, 0.6); // Semi-transparent dark cards
+  --card-text-color: #ffffff; // White text on cards
+  --backdrop-opacity: 0.9; // 90% opacity for backdrops/overlays
 
-  --primary-gradient-start: #243949;
-  --primary-gradient-end: #517fa4;
-  
-  /* Add these variables for dark theme */
-  --header-background: #1f1f1f;
-  --header-text-color: #ffffff;
-  --tab-bar-background: #1f1f1f;
-  --tab-bar-text-color: #b0b0b0;
-  --tab-bar-text-color-selected: #ffffff;
+  /* Primary gradient colors for buttons and highlights - dark theme */
+  --primary-gradient-start: #243949; // Dark blue start color
+  --primary-gradient-end: #517fa4; // Lighter blue end color - creates a subtle blue gradient
+
+  /* Header and tab bar styling - dark theme */
+  --header-background: #1f1f1f; // Very dark gray for headers
+  --header-text-color: #ffffff; // White text in headers
+  --tab-bar-background: #1f1f1f; // Matching dark gray for tab bars
+  --tab-bar-text-color: #b0b0b0; // Light gray text for inactive tabs
+  --tab-bar-text-color-selected: #ffffff; // White text for selected tabs
 }

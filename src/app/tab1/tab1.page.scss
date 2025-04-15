@@ -1,132 +1,147 @@
 /* Font sizes using Ionic variables for consistency */
-$size1: 4rem;
-$size2: 3rem;
-$size3: 2.5rem;
-$size4: 2rem;
-$size5: 1.5rem;
-$size6: 1rem;
+$size1: 4rem; /* Extra large text - page headings */
+$size2: 3rem; /* Large text - main temperature display */
+$size3: 2.5rem; /* Medium-large text - section headings */
+$size4: 2rem; /* Medium text - important info */
+$size5: 1.5rem; /* Small-medium text - secondary info */
+$size6: 1rem; /* Base text size - paragraphs and labels */
 
 /* Modern Weather App Styling */
 
 :host {
-  --page-margin: 16px;
-  --card-border-radius: 16px;
-  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  /* CSS custom properties for consistent spacing and styling */
+  --page-margin: 16px; /* Standard margin for page elements */
+  --card-border-radius: 16px; /* Rounded corners for cards */
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); /* Subtle shadow for depth */
 }
 
 ion-content {
+  /* Gradient background gives a modern look */
   --background: linear-gradient(
     135deg,
     var(--ion-color-primary) 0%,
     var(--ion-color-secondary) 100%
   );
-  --ion-text-color: var(--ion-color-light);
+  --ion-text-color: var(
+    --ion-color-light
+  ); /* Light text for readability on dark background */
 }
 
 ion-toolbar {
+  /* Transparent toolbar to blend with the gradient background */
   --background: transparent;
-  --color: var(--ion-color-light);
+  --color: var(--ion-color-light); /* Light text for contrast */
 }
 
 ion-header {
   ion-toolbar {
-    --background: var(--header-background); // Change this line
-    --border-color: transparent;
-    --color: var(--header-text-color); // Add this line
+    /* Header-specific toolbar styling */
+    --background: var(--header-background); /* Variable allows theme changes */
+    --border-color: transparent; /* Removes default bottom border */
+    --color: var(--header-text-color); /* Text color can be themed */
   }
 }
 
 .current-weather-container {
-  padding: 16px;
+  padding: 16px; /* Adds space around content */
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
+  flex-direction: column; /* Stack children vertically */
+  height: 100%; /* Fill available space */
+  justify-content: center; /* Center content vertically */
 }
 
 ion-card {
-  border-radius: 16px;
+  border-radius: 16px; /* Rounded corners for modern look */
   margin: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.7); // semi-transparent white background
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Semi-transparent white for a frosted glass effect */
 }
 
 .location-name {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 4px;
-  text-align: center;
-  color: var(--ion-color-light);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 28px; /* Large font size for prominence */
+  font-weight: 700; /* Bold font weight for emphasis */
+  margin-bottom: 4px; /* Small spacing below */
+  text-align: center; /* Center-aligned text */
+  color: var(--ion-color-light); /* Light text color for contrast */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Text shadow for readability on variable backgrounds */
 }
 
 .current-datetime {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 16px;
-  text-align: center;
-  color: var(--ion-color-light);
+  font-size: 14px; /* Smaller text for secondary information */
+  opacity: 0.8; /* Slightly transparent for visual hierarchy */
+  margin-bottom: 16px; /* Space below before main content */
+  text-align: center; /* Center alignment */
+  color: var(--ion-color-light); /* Light text color */
 }
 
 .weather-main {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 16px;
+  flex-direction: column; /* Stack icon and temperature vertically */
+  align-items: center; /* Center items horizontally */
+  margin-bottom: 16px; /* Space below section */
 }
 
 .weather-icon {
-  text-align: center;
+  text-align: center; /* Center the icon */
   img {
-    width: 150px;
-    height: 150px;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    width: 150px; /* Fixed width for consistency */
+    height: 150px; /* Fixed height for consistency */
+    filter: drop-shadow(
+      0 4px 6px rgba(0, 0, 0, 0.1)
+    ); /* Subtle shadow for depth */
   }
 }
 
 .temperature {
-  text-align: center;
+  text-align: center; /* Center the temperature */
   .temp-value {
-    font-size: 64px;
-    font-weight: 700;
-    margin: 0;
-    line-height: 1;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    color: var(--ion-color-light);
+    font-size: 64px; /* Very large for visual impact */
+    font-weight: 700; /* Bold font weight */
+    margin: 0; /* Remove default margins */
+    line-height: 1; /* Compact line height */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Shadow improves readability */
+    color: var(--ion-color-light); /* Light text color */
   }
 }
 
 .weather-description {
-  text-align: center;
-  font-size: 20px;
-  font-weight: 500;
-  margin: 0;
-  text-transform: capitalize;
-  color: var(--ion-color-light);
+  text-align: center; /* Center alignment */
+  font-size: 20px; /* Larger than body text */
+  font-weight: 500; /* Medium font weight */
+  margin: 0; /* Remove default margins */
+  text-transform: capitalize; /* Capitalizes first letter of each word */
+  color: var(--ion-color-light); /* Light text color */
 }
 
 /* Loading spinner styles */
 ion-spinner {
-  color: var(--ion-color-light);
-  transform: scale(1.5);
-  opacity: 0.8;
+  color: var(--ion-color-light); /* Light color for visibility */
+  transform: scale(1.5); /* Make spinner 50% larger */
+  opacity: 0.8; /* Slightly transparent */
 }
 
 ion-refresher {
-  --ion-text-color: var(--ion-color-light);
+  --ion-text-color: var(
+    --ion-color-light
+  ); /* Light text for pull-to-refresh control */
 }
 
 .offline-chip {
-  margin: 10px auto;
+  margin: 10px auto; /* Center horizontally with space above/below */
   display: flex;
-  justify-content: center;
-  background-color: rgba(255, 152, 0, 0.2);
-  border: 1px solid var(--ion-color-warning);
+  justify-content: center; /* Center contents */
+  background-color: rgba(255, 152, 0, 0.2); /* Semi-transparent warning color */
+  border: 1px solid var(--ion-color-warning); /* Warning color border */
 }
 
 .data-timestamp {
-  text-align: center;
-  opacity: 0.8;
-  font-style: italic;
-  margin-top: 5px;
+  text-align: center; /* Center text */
+  opacity: 0.8; /* Slightly transparent */
+  font-style: italic; /* Italic for secondary information */
+  margin-top: 5px; /* Small space above */
 }

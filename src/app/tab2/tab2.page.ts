@@ -8,8 +8,8 @@ import {
   IonRefresherContent,
   IonButton,
   IonSpinner,
-  IonChip, // Add this import
-  IonLabel, // Add this import
+  IonChip,
+  IonLabel,
 } from '@ionic/angular/standalone';
 import { ExploreContainerComponentModule } from '../explore-container/explore-container.module';
 import { IonSearchbar } from '@ionic/angular/standalone';
@@ -23,7 +23,7 @@ import { IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { WindPipe } from '../pipes/wind.pipe';
 import { DayPipe } from '../pipes/day.pipe';
 import { RainPipe } from '../pipes/rain.pipe';
-import { FormsModule } from '@angular/forms'; // Add this import
+import { FormsModule } from '@angular/forms';
 import {
   compassOutline,
   waterOutline,
@@ -31,7 +31,7 @@ import {
   cloudOutline,
   locationOutline,
   bookmarkOutline,
-  cloudOfflineOutline, // Add this icon
+  cloudOfflineOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { ReverseGeocodingService } from '../services/reverse-geocoding.service';
@@ -71,9 +71,9 @@ import { Subscription } from 'rxjs';
     RainPipe,
     IonButton,
     IonSpinner,
-    IonChip, // Add this to your imports
-    IonLabel, // Add this to your imports
-    FormsModule, // Add this to your imports
+    IonChip, // For offline mode indicator
+    IonLabel, // For offline mode text
+    FormsModule, // For searchbar binding
   ],
 })
 export class Tab2Page {
@@ -171,7 +171,7 @@ export class Tab2Page {
   private handleNetworkStatusChange = () => {
     const wasOffline = this.isOffline;
     this.isOffline = !navigator.onLine;
-  
+
     if (wasOffline && !this.isOffline) {
       // Just came back online - refresh data if we have a location
       this.showToast('You are back online. Refreshing data...');
@@ -420,7 +420,7 @@ export class Tab2Page {
     }
 
     const savedLocation = this.locationService.getLastLocation();
-    
+
     if (savedLocation) {
       // Show loading indicator
       const loading = await this.loadingController.create({
@@ -430,7 +430,7 @@ export class Tab2Page {
         keyboardClose: false,
       });
       await loading.present();
-      
+
       try {
         this.loadFromSavedLocation(savedLocation);
         this.showToast(`Reset to ${savedLocation.name}`);
@@ -444,8 +444,9 @@ export class Tab2Page {
       // No saved location found
       const alert = await this.alertController.create({
         header: 'No Saved Location',
-        message: 'There is no saved location to reset to. Please save a location first.',
-        buttons: ['OK']
+        message:
+          'There is no saved location to reset to. Please save a location first.',
+        buttons: ['OK'],
       });
       await alert.present();
     }

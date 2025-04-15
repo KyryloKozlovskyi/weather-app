@@ -1,30 +1,44 @@
+<!-- Primary app header that appears at the top of the screen -->
 <ion-header [translucent]="true">
+  <!-- translucent property allows content to be seen through the header when scrolling -->
   <ion-toolbar>
     <ion-title>Current Weather</ion-title>
+    <!-- Main page title -->
   </ion-toolbar>
 </ion-header>
 
+<!-- Main content container for the page -->
 <ion-content [fullscreen]="true">
+  <!-- fullscreen extends content under the header -->
+  <!-- Pull-to-refresh functionality - calls handleRefresh method when activated -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
+    <!-- Default refresh UI -->
   </ion-refresher>
 
+  <!-- Offline indicator - only displays when app is in offline mode -->
   <ion-chip *ngIf="isOffline" color="warning" class="offline-chip">
     <ion-icon name="cloud-offline-outline"></ion-icon>
     <ion-label>Offline Mode - Showing Cached Data</ion-label>
   </ion-chip>
 
+  <!-- iOS-specific collapsible header for better UX on iOS devices -->
+  <!-- Only appears when scrolling down on iOS -->
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Weather Today</ion-title>
+      <!-- Larger title for iOS -->
     </ion-toolbar>
   </ion-header>
 
+  <!-- Loading state - displays spinner while data is being fetched -->
   <div *ngIf="loading" class="ion-padding ion-text-center">
     <ion-spinner name="crescent"></ion-spinner>
+    <!-- Animated loading indicator -->
     <p>Loading weather data...</p>
   </div>
 
+  <!-- Error state - displays when an error occurs fetching data -->
   <div *ngIf="error" class="ion-padding ion-text-center">
     <ion-icon
       name="alert-circle-outline"
@@ -32,23 +46,28 @@
       size="large"
     ></ion-icon>
     <p>{{ error }}</p>
+    <!-- Dynamic error message from component -->
     <ion-button (click)="getCurrentLocation()">Retry</ion-button>
+    <!-- Retry button to attempt data fetch again -->
   </div>
 
+  <!-- Main weather display - only shown when data is successfully loaded -->
+  <!-- Multiple conditions ensure we have valid data before rendering -->
   <div
     *ngIf="!loading && !error && currentWeather && location"
     class="current-weather-container"
   >
-    <!-- Location Name -->
+    <!-- Location Name section -->
     <h1 class="location-name">{{ location.name }}</h1>
 
-    <!-- Current Date and Time -->
+    <!-- Current Date and Time section - converts Unix timestamp to readable format -->
     <p class="current-datetime">
       {{ currentWeather.current.dt * 1000 | date:'EEEE, MMMM d • h:mm a' }}
     </p>
 
-    <!-- Weather Icon and Temperature -->
+    <!-- Weather Icon and Temperature section -->
     <div class="weather-main">
+      <!-- Weather icon from API -->
       <div class="weather-icon">
         <img
           [src]="getWeatherIcon(currentWeather.current.weather[0].icon)"
@@ -56,15 +75,17 @@
         />
       </div>
 
+      <!-- Temperature display with unit symbol -->
       <div class="temperature">
         <h2 class="temp-value">
           {{ currentWeather.current.temp | number:'1.0-0' }}{{ getUnitSymbol()
           }}
+          <!-- number pipe formats temperature without decimal places -->
         </h2>
       </div>
     </div>
 
-    <!-- Weather Description -->
+    <!-- Weather Description from API - displays conditions like "partly cloudy" -->
     <p class="weather-description">
       {{ currentWeather.current.weather[0].description }}
     </p>

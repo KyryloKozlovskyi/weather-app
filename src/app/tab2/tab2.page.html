@@ -1,28 +1,39 @@
-<!-- Header -->
+<!-- Header section - Fixed at top of screen -->
 <ion-header [translucent]="true">
+  <!-- translucent property allows content to be seen through the header when scrolling -->
   <ion-toolbar>
     <ion-title>Weather Forecast</ion-title>
+    <!-- Main page title displayed in the toolbar -->
   </ion-toolbar>
 </ion-header>
 
+<!-- Main content container for the page -->
 <ion-content [fullscreen]="true">
+  <!-- fullscreen extends content under the header when scrolling -->
+
+  <!-- Pull-to-refresh functionality that triggers handleRefresh method -->
   <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
+    <!-- Default refresh UI component -->
   </ion-refresher>
 
+  <!-- Offline mode indicator - only displays when network is unavailable -->
   <ion-chip *ngIf="isOffline" color="warning" class="offline-chip">
     <ion-icon name="cloud-offline-outline"></ion-icon>
     <ion-label>Offline Mode - Showing Cached Data</ion-label>
+    <!-- Visual indicator that informs user they're viewing cached data -->
   </ion-chip>
 
-  <!-- Search Container -->
+  <!-- Search Container - For location searching -->
   <div class="search-container" [class.disabled-container]="isOffline">
+    <!-- Adds disabled styling when offline -->
     <ion-button
       class="location-button"
       (click)="resetToSavedLocation()"
       [disabled]="isOffline"
     >
       <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      <!-- Button to quickly return to saved default location -->
     </ion-button>
     <ion-searchbar
       placeholder="Search city..."
@@ -31,42 +42,50 @@
       enterkeyhint="search"
       [disabled]="isOffline"
     ></ion-searchbar>
+    <!-- Search input field that triggers search on Enter key press -->
   </div>
 
-  <!-- Loading Spinner -->
+  <!-- Loading Spinner - Displays during API requests -->
   <div *ngIf="isLoading" class="ion-text-center ion-padding">
     <ion-spinner name="crescent"></ion-spinner>
     <p class="ion-text-center ion-color-light">Getting weather data...</p>
+    <!-- Loading indicator with message -->
   </div>
 
-  <!-- Weather Content -->
+  <!-- Weather Content - Only displays when data is loaded and not loading -->
   <div *ngIf="showContent && !isLoading">
-    <!-- Main Weather Display -->
+    <!-- Main Weather Display - Shows current weather overview -->
     <ion-grid class="tempgrid">
       <ion-row class="main">
         <div class="city" *ngIf="geoRevResp[0]">{{ geoRevResp[0].name }}</div>
+        <!-- Location name from reverse geocoding -->
         <div class="date" *ngIf="resp.current">
           {{ resp.current.dt * 1000 | date:'string' }}
         </div>
+        <!-- Current date - converts Unix timestamp to readable date -->
         <div class="temperature" *ngIf="resp.daily">
           {{ resp.daily[0].temp.max | number: '1.0-0' }} / {{
           resp.daily[0].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
         </div>
+        <!-- Today's temperature range (max/min) with unit symbol -->
         <div class="icon" *ngIf="resp.current">
           <img
             src="http://openweathermap.org/img/wn/{{ resp.current.weather[0].icon }}@4x.png"
             alt="Weather Icon"
             width="150"
           />
+          <!-- Weather icon from OpenWeatherMap API -->
         </div>
         <div class="description" *ngIf="resp.current">
           {{ resp.current.weather[0].main }}
         </div>
+        <!-- Weather condition description (e.g., "Clear", "Rain") -->
       </ion-row>
     </ion-grid>
 
-    <!-- Weather Conditions Grid -->
+    <!-- Weather Conditions Grid - Detailed current weather metrics -->
     <div class="forecastdivider">Current conditions</div>
+    <!-- Section divider/header -->
     <ion-grid class="conditions-grid">
       <ion-row>
         <ion-col size="6">
@@ -78,6 +97,7 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.wind_speed }} {{ getWindSpeedUnit() }}
             </div>
+            <!-- Wind speed with appropriate unit (mph or km/h) -->
           </div>
         </ion-col>
 
@@ -90,6 +110,7 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.rain | rain:resp }} {{ getRainfallUnit() }}
             </div>
+            <!-- Rainfall amount with custom pipe for data formatting -->
           </div>
         </ion-col>
       </ion-row>
@@ -104,6 +125,7 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.wind_deg | wind }}
             </div>
+            <!-- Wind direction converted from degrees to cardinal direction (N, NE, etc.) using pipe -->
           </div>
         </ion-col>
 
@@ -116,6 +138,7 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.humidity }}%
             </div>
+            <!-- Humidity percentage -->
           </div>
         </ion-col>
       </ion-row>
@@ -130,6 +153,7 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.pressure }} hPa
             </div>
+            <!-- Atmospheric pressure in hectopascals -->
           </div>
         </ion-col>
 
@@ -142,15 +166,17 @@
             <div class="detailed" *ngIf="resp.current">
               {{ resp.current.clouds }}%
             </div>
+            <!-- Cloud coverage percentage -->
           </div>
         </ion-col>
       </ion-row>
     </ion-grid>
 
-    <!-- Forecast Section -->
+    <!-- Forecast Section - 7-day weather forecast -->
     <div class="forecastdivider">7-day forecast</div>
+    <!-- Section divider/header -->
     <ion-grid class="forecast">
-      <!-- Keep the existing forecast section structure -->
+      <!-- Day names row - Shows day of week for each forecast day -->
       <ion-row>
         <ion-col class="day" *ngIf="resp.daily"
           >{{resp.daily[0].dt | day}}</ion-col
@@ -173,8 +199,10 @@
         <ion-col class="day" *ngIf="resp.daily"
           >{{resp.daily[6].dt | day}}</ion-col
         >
+        <!-- Each column shows day name using custom pipe to format Unix timestamp -->
       </ion-row>
-      <!-- Icons -->
+
+      <!-- Weather icons row - Visual representation of forecast conditions -->
       <ion-row>
         <ion-col class="gridicon" *ngIf="resp.daily"
           ><img
@@ -211,8 +239,10 @@
             src="http://openweathermap.org/img/wn/{{ resp.daily[6].weather[0].icon }}@2x.png"
             alt="API Image"
         /></ion-col>
+        <!-- Weather icons directly from OpenWeatherMap API -->
       </ion-row>
-      <!-- Max Temp -->
+
+      <!-- Maximum temperature row - High temps for each day -->
       <ion-row>
         <ion-col class="max" *ngIf="resp.daily">
           {{ resp.daily[0].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
@@ -235,8 +265,10 @@
         <ion-col class="max" *ngIf="resp.daily">
           {{ resp.daily[6].temp.max | number: '1.0-0' }}{{ getUnitSymbol() }}
         </ion-col>
+        <!-- Max temperatures formatted without decimal places and with unit symbol -->
       </ion-row>
-      <!-- Min Temp -->
+
+      <!-- Minimum temperature row - Low temps for each day -->
       <ion-row>
         <ion-col class="min" *ngIf="resp.daily">
           {{ resp.daily[0].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
@@ -259,6 +291,7 @@
         <ion-col class="min" *ngIf="resp.daily">
           {{ resp.daily[6].temp.min | number: '1.0-0' }}{{ getUnitSymbol() }}
         </ion-col>
+        <!-- Min temperatures formatted without decimal places and with unit symbol -->
       </ion-row>
     </ion-grid>
   </div>

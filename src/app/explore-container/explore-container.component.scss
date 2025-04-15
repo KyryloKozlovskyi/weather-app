@@ -1,3 +1,4 @@
+/* Main container styles - centers content vertically */
 #container {
   text-align: center;
 
@@ -8,11 +9,13 @@
   transform: translateY(-50%);
 }
 
+/* Title text styling */
 #container strong {
   font-size: 20px;
   line-height: 26px;
 }
 
+/* Paragraph text styling */
 #container p {
   font-size: 16px;
   line-height: 22px;
@@ -22,6 +25,7 @@
   margin: 0;
 }
 
+/* Link styling - removes default underline */
 #container a {
   text-decoration: none;
 }

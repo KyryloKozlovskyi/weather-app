@@ -1,11 +1,36 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Wind direction pipe that converts wind degrees to cardinal directions
+ *
+ * This pipe transforms numerical wind degree values (0-360) into
+ * human-readable cardinal directions (N, NE, E, SE, S, SW, W, NW).
+ *
+ * Usage example in template:
+ * {{ windDegreeValue | wind }}
+ */
 @Pipe({
   name: 'wind',
   standalone: true,
 })
-// Wind pipe tranlates degrees into compass directions (N, NE, E, SE, S, SW, W, NW)
 export class WindPipe implements PipeTransform {
+  /**
+   * Transforms wind direction in degrees to cardinal direction
+   *
+   * @param degrees - Wind direction in degrees (0-360)
+   * @returns Cardinal direction as a string (N, NE, E, SE, S, SW, W, NW)
+   *          or 'Invalid degrees' if value is outside 0-360 range
+   *
+   * Direction mappings:
+   * - North (N): 0° to <45°
+   * - Northeast (NE): 45° to 90°
+   * - East (E): >90° to 135°
+   * - Southeast (SE): >135° to 180°
+   * - South (S): >180° to 225°
+   * - Southwest (SW): >225° to 270°
+   * - West (W): >270° to 315°
+   * - Northwest (NW): >315° to 360°
+   */
   transform(degrees: number): string {
     if (degrees >= 0 && degrees < 45) {
       return 'N';

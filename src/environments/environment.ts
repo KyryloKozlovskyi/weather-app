@@ -2,9 +2,15 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+/**
+ * Development environment configuration
+ */
 export const environment = {
+  // Flag indicating whether app is running in production mode
   production: false,
-  openWeatherMapApiKey: 'c213bf7641522d502751e12a087b3d5d', // Replace with your actual API key
+
+  // API key for OpenWeatherMap service - replace with your own key
+  openWeatherMapApiKey: 'c213bf7641522d502751e12a087b3d5d',
 };
 
 /*

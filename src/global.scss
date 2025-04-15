@@ -32,11 +32,18 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
+/* Always use dark mode regardless of system or user preference */
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
+
+/* Use dark mode based on .dark class applied to a parent element (manual toggle) */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
+
+/* Use dark mode based on user's system preference (automatic) */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
-/* Add these styles to your global.scss */
+/* Main content background with linear gradient
+ * Uses CSS variables for theme-specific gradient colors
+ */
 ion-content {
   --background: linear-gradient(
     135deg,
@@ -45,39 +52,56 @@ ion-content {
   ) !important;
 }
 
-/* Updated card styling with better transparency handling */
+/* Base card styling with glass-like effect
+ * Applies backdrop blur and subtle shadow for depth
+ * Uses CSS variables for theme-aware styling
+ */
 ion-card {
   background: var(--ion-card-background) !important;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); /* Glass effect */
   color: var(--card-text-color);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  transition: all 0.3s ease; /* Smooth transitions for hover/state changes */
 }
 
-/* Light theme specific overrides */
+/* Light theme card styles
+ * Semi-transparent white background with subtle border
+ * :root selector targets the light theme (default)
+ */
 :root ion-card {
   background: rgba(255, 255, 255, 0.75) !important;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Dark theme specific overrides - lighter and more transparent background */
+/* Dark theme card styles
+ * Lighter, semi-transparent dark background for better visibility
+ * .dark class targets when dark mode is active
+ */
 .dark ion-card {
   background: rgba(60, 60, 70, 0.6) !important;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Ensuring text contrast in both themes */
+/* Text styling for light theme cards
+ * Ensures proper contrast for title and subtitle elements
+ */
 :root ion-card-title,
 :root ion-card-subtitle {
   color: var(--ion-color-dark);
 }
 
+/* Content text styling for light theme
+ * Uses medium color for better readability against card background
+ */
 :root ion-card-content,
 :root ion-item {
   color: var(--ion-color-medium);
 }
 
-/* Specific styling for App Theme card in light mode */
+/* Special styling for the theme toggle card in light mode
+ * Uses the :has() selector for modern CSS targeting
+ * Targets any card that contains an ion-card-title with the contrast-outline icon
+ */
 :root ion-card:has(ion-card-title:has(ion-icon[name="contrast-outline"])) {
   ion-card-title,
   ion-card-subtitle,
@@ -85,11 +109,13 @@ ion-card {
   ion-item ion-text,
   ion-radio-group ion-item ion-label,
   ion-radio-group ion-item ion-icon {
-    color: #222428;
+    color: #222428; /* Ensures dark text for better visibility */
   }
 }
 
-/* Dark theme text colors to ensure readability */
+/* Dark theme text color overrides
+ * Forces white text in dark mode for better contrast and readability
+ */
 .dark ion-card-title,
 .dark ion-card-subtitle,
 .dark ion-card-content,
@@ -97,12 +123,17 @@ ion-card {
   color: #ffffff !important;
 }
 
+/* Transparent background for items inside cards
+ * Inherits text color from parent elements
+ */
 ion-item {
   --background: transparent;
   --color: var(--ion-text-color);
 }
 
-/* For theme toggle switch styling */
+/* Theme toggle switch container styling
+ * Creates a subtle rounded container for the toggle
+ */
 .theme-toggle {
   display: flex;
   padding: 4px;
@@ -111,11 +142,17 @@ ion-item {
   margin: 8px 0;
 }
 
-/* Force refresh class for theme switching */
+/* Animation class for theme switching
+ * Triggers a quick animation to force UI refresh when theme changes
+ * Helps prevent visual glitches during theme transition
+ */
 .force-refresh {
   animation: refresh 0.1s;
 }
 
+/* Refresh animation keyframes 
+ * Very subtle opacity change to force element redraw
+ */
 @keyframes refresh {
   0% {
     opacity: 0.99;
@@ -125,13 +162,18 @@ ion-item {
   }
 }
 
-/* Header styling for both themes */
+/* Header toolbar styling for both themes
+ * Uses CSS variables for theme-aware background and text colors
+ */
 ion-header ion-toolbar {
   --background: var(--header-background);
   --color: var(--header-text-color);
 }
 
-/* Tab bar styling for both themes */
+/* Tab bar styling for both themes
+ * Customizes background, inactive, and active text colors
+ * Adds subtle top border for visual separation
+ */
 ion-tab-bar {
   --background: var(--tab-bar-background);
   --color: var(--tab-bar-text-color);
@@ -139,7 +181,10 @@ ion-tab-bar {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Add a subtle shadow to the header */
+/* Shadow effect for header
+ * Creates a subtle gradient shadow below header for depth
+ * Uses pseudo-element to avoid affecting header content
+ */
 ion-header::after {
   display: block;
   content: "";
@@ -151,14 +196,18 @@ ion-header::after {
   z-index: 1;
 }
 
-/* Improve tab bar icons */
+/* Enhanced tab button styling
+ * Improves visual feedback for selected tab
+ * Adds transition for smooth state changes
+ */
 ion-tab-button {
   --color-selected: var(--tab-bar-text-color-selected);
 
   ion-icon {
-    transition: all 0.2s ease;
+    transition: all 0.2s ease; /* Smooth icon transitions */
   }
 
+  /* Glow effect for selected tab icon */
   &.tab-selected ion-icon {
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
   }

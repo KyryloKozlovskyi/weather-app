@@ -1,38 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Basic document metadata -->
     <meta charset="utf-8" />
     <title>Weather App</title>
 
+    <!-- Base URL for all relative URLs in the document -->
     <base href="/" />
 
+    <!-- Support for both light and dark color schemes -->
     <meta name="color-scheme" content="light dark" />
+    <!-- Mobile viewport settings for responsive design -->
     <meta
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <!-- Prevent phone number detection -->
     <meta name="format-detection" content="telephone=no" />
+    <!-- Disable tap highlight on Windows Phone -->
     <meta name="msapplication-tap-highlight" content="no" />
 
+    <!-- Favicon for the browser tab -->
     <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
 
-    <!-- PWA Meta Tags -->
+    <!-- Progressive Web App (PWA) configuration -->
+    <!-- Controls the color of browser UI elements -->
     <meta name="theme-color" content="#4facfe" />
+    <!-- App description for search engines and app stores -->
     <meta
       name="description"
       content="A weather application with current conditions and forecasts"
     />
+    <!-- Web app manifest file that defines app behavior when installed -->
     <link rel="manifest" href="manifest.webmanifest" />
+    <!-- Icon displayed when app is added to iOS home screen -->
     <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png" />
 
-    <!-- add to homescreen for ios -->
+    <!-- iOS specific configurations -->
+    <!-- Allow app to be added to home screen -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Style for iOS status bar -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   </head>
 
   <body>
+    <!-- Root component where the Angular app will be mounted -->
     <app-root></app-root>
+    <!-- Fallback message for users with JavaScript disabled -->
     <noscript
       >Please enable JavaScript to continue using this application.</noscript
     >

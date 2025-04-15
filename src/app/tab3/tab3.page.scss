@@ -1,128 +1,151 @@
-/* Font sizes using Ionic variables for consistency */
-$size1: 4rem;
-$size2: 3rem;
-$size3: 2.5rem;
-$size4: 2rem;
-$size5: 1.5rem;
-$size6: 1rem;
+/* Font size variables for consistent typography throughout the app */
+$size1: 4rem; // Used for largest elements like main temperature display
+$size2: 3rem; // Used for secondary large elements
+$size3: 2.5rem; // Used for tertiary headers
+$size4: 2rem; // Used for section headers
+$size5: 1.5rem; // Used for sub-section headers
+$size6: 1rem; // Used for body text
 
 /* Modern Weather App Styling */
 
 :host {
-  --page-margin: 16px;
-  --card-border-radius: 16px;
-  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --page-margin: 16px; // Consistent page margin throughout
+  --card-border-radius: 16px; // Rounded corners for cards
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); // Subtle shadow for depth
 }
 
+/* Background gradient for the main content area */
 ion-content {
   --background: linear-gradient(
     135deg,
     var(--ion-color-primary) 0%,
     var(--ion-color-secondary) 100%
   );
-  --ion-text-color: var(--ion-color-light);
+  --ion-text-color: var(
+    --ion-color-light
+  ); // Light text for contrast against gradient
 }
 
+/* Transparent toolbar for a modern look */
 ion-toolbar {
   --background: transparent;
   --color: var(--ion-color-light);
 }
 
+/* Header styling */
 ion-header {
   ion-toolbar {
-    --background: var(--header-background); // Change this line
-    --border-color: transparent;
-    --color: var(--header-text-color); // Add this line
+    --background: var(
+      --header-background
+    ); // Custom variable for header background
+    --border-color: transparent; // Remove default borders
+    --color: var(--header-text-color); // Custom variable for header text color
   }
 }
 
+/* Settings page container spacing */
 .settings-container {
   padding: 16px;
 }
 
+/* Card styling with glassmorphism effect */
 ion-card {
   border-radius: var(--card-border-radius);
   margin-bottom: 16px;
   box-shadow: var(--box-shadow);
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15); // Translucent background
+  backdrop-filter: blur(10px); // Frosted glass effect
 
   ion-card-header {
-    padding-bottom: 8px;
+    padding-bottom: 8px; // Reduced padding for tighter layout
   }
 
+  /* Card title styling */
   ion-card-title {
     font-size: 18px;
     font-weight: 600;
     color: var(--ion-color-light);
     display: flex;
-    align-items: center;
+    align-items: center; // Center icon with text
 
+    /* Icon styling within card titles */
     ion-icon {
       font-size: 20px;
-      margin-right: 8px;
+      margin-right: 8px; // Space between icon and text
     }
   }
 
+  /* Card content text styling */
   ion-card-content {
     color: var(--ion-color-light);
-    opacity: 0.9;
+    opacity: 0.9; // Slightly transparent for visual hierarchy
   }
 }
 
+/* List item styling for settings */
 ion-item {
-  --background: transparent;
-  --color: var(--ion-color-light);
-  --padding-start: 0;
-  margin-top: 15px;
+  --background: transparent; // Transparent background
+  --color: var(--ion-color-light); // Light text color
+  --padding-start: 0; // Remove default padding
+  margin-top: 15px; // Vertical spacing between items
   margin-bottom: 10px;
 
+  /* Icons within list items */
   ion-icon {
     color: var(--ion-color-light);
   }
 }
 
+/* Segment control styling (for toggling between options) */
 ion-segment {
-  --background: rgba(255, 255, 255, 0.1);
+  --background: rgba(255, 255, 255, 0.1); // Subtle background
   width: 100%;
 
+  /* Segment button styling */
   ion-segment-button {
-    --color: var(--ion-color-light);
-    --color-checked: var(--ion-color-primary);
-    --indicator-color: var(--ion-color-light);
+    --color: var(--ion-color-light); // Unselected color
+    --color-checked: var(--ion-color-primary); // Selected color
+    --indicator-color: var(--ion-color-light); // Indicator line color
   }
 }
 
+/* Radio button styling */
 ion-radio {
-  --color: var(--ion-color-light);
-  --color-checked: var(--ion-color-light);
+  --color: var(--ion-color-light); // Unselected color
+  --color-checked: var(--ion-color-light); // Selected color
 }
 
+/* List container styling */
 ion-list {
-  background: transparent;
+  background: transparent; // Transparent background
 
+  /* List items within ion-list */
   ion-item {
     --background: transparent;
-    --border-color: rgba(255, 255, 255, 0.1);
+    --border-color: rgba(255, 255, 255, 0.1); // Subtle borders
   }
 }
 
+/* Location name display */
 .location-name {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
+/* Location coordinates display */
 .location-coords {
   margin-bottom: 16px;
   font-size: 14px;
-  opacity: 0.9;
+  opacity: 0.9; // Slightly faded for visual hierarchy
 }
 
+/* Styling for when no location is selected */
 .no-location {
   text-align: center;
   margin: 16px 0;
 
+  /* Helper text styling */
   .hint {
     font-size: 14px;
     opacity: 0.8;
@@ -130,26 +153,30 @@ ion-list {
   }
 }
 
+/* Toast notification styling */
 .toast-message {
   text-align: center;
   font-weight: 500;
 }
 
+/* Button container layout */
 .button-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 10px; // Space between buttons
   margin-top: 15px;
 }
 
+/* Styling for disabled cards */
 .disabled-card {
-  opacity: 0.7;
+  opacity: 0.7; // Faded appearance for disabled state
 }
 
+/* Offline indicator chip styling */
 .offline-chip {
   margin: 10px;
   display: flex;
   justify-content: center;
-  background-color: rgba(255, 152, 0, 0.2);
-  border: 1px solid var(--ion-color-warning);
+  background-color: rgba(255, 152, 0, 0.2); // Transparent warning color
+  border: 1px solid var(--ion-color-warning); // Warning border
 }

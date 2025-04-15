@@ -128,24 +128,30 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   // Handle network status changes
+  // Arrow function used to maintain 'this' context when used as event handler
   private handleNetworkStatusChange = () => {
+    // Update offline status based on browser's navigator.onLine property
     this.isOffline = !navigator.onLine;
   };
 
-  // Show warning for disabled settings
+  /**
+   * Shows a toast warning when features are attempted in offline mode
+   * @returns true if offline warning was shown, false otherwise
+   */
   async showOfflineWarning() {
     if (this.isOffline) {
+      // Create and display a warning toast with custom styling
       const toast = await this.toastController.create({
         message: 'This feature is disabled in offline mode',
-        duration: 2000,
-        position: 'bottom',
-        color: 'warning',
-        cssClass: 'toast-message',
+        duration: 2000, // 2 seconds display time
+        position: 'bottom', // Toast appears at bottom of screen
+        color: 'warning', // Yellow warning color
+        cssClass: 'toast-message', // Custom CSS class for additional styling
       });
       await toast.present();
-      return true;
+      return true; // Indicates warning was shown (user is offline)
     }
-    return false;
+    return false; // Indicates no warning needed (user is online)
   }
 
   // Handle temperature unit change

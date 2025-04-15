@@ -1,3 +1,4 @@
+<!-- Main header - always visible -->
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title> Settings </ion-title>
@@ -5,31 +6,41 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- Collapsible header - only visible when scrolling down on iOS -->
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Settings</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <!-- Offline indicator -->
+  <!-- Offline indicator - shows warning when no internet connection is available -->
   <ion-chip *ngIf="isOffline" color="warning" class="offline-chip">
     <ion-icon name="cloud-offline-outline"></ion-icon>
     <ion-label>Offline Mode - Showing Cached Data</ion-label>
   </ion-chip>
 
   <div class="settings-container">
-    <!-- Units Section -->
+    <!-- Temperature Units Section - Allows switching between Celsius and Fahrenheit -->
+    <!-- Disabled when offline to prevent settings changes that can't be synced -->
     <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="thermometer-outline"></ion-icon>
           Temperature Units
-          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
+          <!-- Lock icon appears only when the device is offline -->
+          <ion-icon
+            *ngIf="isOffline"
+            name="lock-closed-outline"
+            size="small"
+            color="medium"
+          ></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-list lines="none">
           <ion-item>
+            <!-- Segmented control for temperature unit selection -->
+            <!-- Switches between metric (°C) and imperial (°F) units -->
             <ion-segment
               [(ngModel)]="temperatureUnit"
               (ionChange)="unitChanged($event)"
@@ -47,7 +58,8 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Theme Section - Always enabled -->
+    <!-- Theme Section - Controls app appearance (light/dark/system) -->
+    <!-- Always enabled since it doesn't require network connectivity -->
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -57,6 +69,7 @@
       </ion-card-header>
       <ion-card-content>
         <ion-list lines="none">
+          <!-- Radio group for theme selection with three options -->
           <ion-radio-group
             [(ngModel)]="darkMode"
             (ionChange)="themeChanged($event)"
@@ -81,16 +94,24 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Saved Location Section -->
+    <!-- Saved Location Section - Display and manage the user's preferred weather location -->
+    <!-- Disabled when offline since location services require connectivity -->
     <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="location-outline"></ion-icon>
           Saved Location
-          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
+          <!-- Lock icon appears when offline -->
+          <ion-icon
+            *ngIf="isOffline"
+            name="lock-closed-outline"
+            size="small"
+            color="medium"
+          ></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
+        <!-- Display when a location is already saved - shows location info and management options -->
         <div *ngIf="savedLocation">
           <p class="location-name">{{ savedLocation.name }}</p>
           <p class="location-coords">
@@ -98,6 +119,7 @@
             savedLocation.lon | number:'1.4-4' }}
           </p>
 
+          <!-- City search input for changing location -->
           <ion-item>
             <ion-input
               placeholder="Enter city name"
@@ -106,13 +128,22 @@
               label-placement="floating"
               [disabled]="isOffline"
             ></ion-input>
-            <ion-button slot="end" (click)="changeLocation()" [disabled]="isOffline">
+            <ion-button
+              slot="end"
+              (click)="changeLocation()"
+              [disabled]="isOffline"
+            >
               <ion-icon name="search-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
+          <!-- Location action buttons for using current location or clearing saved location -->
           <div class="button-container">
-            <ion-button expand="block" (click)="useCurrentLocation()" [disabled]="isOffline">
+            <ion-button
+              expand="block"
+              (click)="useCurrentLocation()"
+              [disabled]="isOffline"
+            >
               <ion-icon slot="start" name="location-outline"></ion-icon>
               Use Current Location
             </ion-button>
@@ -128,10 +159,12 @@
           </div>
         </div>
 
+        <!-- Display when no location is saved yet - shows setup options -->
         <div *ngIf="!savedLocation" class="no-location">
           <p>No location saved</p>
           <p class="hint">Set a location using one of the options below</p>
 
+          <!-- City search input for setting initial location -->
           <ion-item>
             <ion-input
               placeholder="Enter city name"
@@ -140,12 +173,20 @@
               label-placement="floating"
               [disabled]="isOffline"
             ></ion-input>
-            <ion-button slot="end" (click)="changeLocation()" [disabled]="isOffline">
+            <ion-button
+              slot="end"
+              (click)="changeLocation()"
+              [disabled]="isOffline"
+            >
               <ion-icon name="search-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
-          <ion-button expand="block" (click)="useCurrentLocation()" [disabled]="isOffline">
+          <ion-button
+            expand="block"
+            (click)="useCurrentLocation()"
+            [disabled]="isOffline"
+          >
             <ion-icon slot="start" name="location-outline"></ion-icon>
             Use Current Location
           </ion-button>
@@ -153,38 +194,34 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Cache Management Section -->
+    <!-- Cache Management Section - Allows clearing locally stored data -->
+    <!-- Disabled when offline as clearing cache makes no sense without ability to fetch new data -->
     <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="refresh-outline"></ion-icon>
           Cache Management
-          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
+          <!-- Lock icon appears when offline -->
+          <ion-icon
+            *ngIf="isOffline"
+            name="lock-closed-outline"
+            size="small"
+            color="medium"
+          ></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>Clear cached weather data to fetch fresh information.</p>
-        <ion-button expand="block" color="warning" (click)="clearCache()" [disabled]="isOffline">
-          <ion-icon slot="start" name="trash-outline"></ion-icon>
-          Clear App Cache
+        <!-- Button for cache clearing functionality -->
+        <ion-button expand="block" color="warning" [disabled]="isOffline">
         </ion-button>
       </ion-card-content>
     </ion-card>
 
-    <!-- About Section -->
+    <!-- About Section - Contains app information -->
     <ion-card>
-      <ion-card-header>
-        <ion-card-title>
-          <ion-icon name="information-circle-outline"></ion-icon>
-          About
-        </ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p><strong>Weather App</strong></p>
-        <p>Version 1.0.0</p>
-        <p>Weather data provided by OpenWeatherMap</p>
-        <small>© 2025 All Rights Reserved</small>
-      </ion-card-content>
+      <ion-card-header> </ion-card-header>
+      <ion-card-content> </ion-card-content>
     </ion-card>
   </div>
 </ion-content>
