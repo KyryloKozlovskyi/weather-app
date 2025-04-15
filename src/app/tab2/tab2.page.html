@@ -16,14 +16,20 @@
   </ion-chip>
 
   <!-- Search Container -->
-  <div class="search-container">
-    <ion-button class="location-button" (click)="resetToSavedLocation()">
+  <div class="search-container" [class.disabled-container]="isOffline">
+    <ion-button
+      class="location-button"
+      (click)="resetToSavedLocation()"
+      [disabled]="isOffline"
+    >
       <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
     </ion-button>
     <ion-searchbar
       placeholder="Search city..."
       (keypress)="handleInput($event)"
+      [(ngModel)]="userInput"
       enterkeyhint="search"
+      [disabled]="isOffline"
     ></ion-searchbar>
   </div>
 

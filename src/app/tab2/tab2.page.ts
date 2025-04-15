@@ -23,6 +23,7 @@ import { IonGrid, IonRow, IonCol } from '@ionic/angular/standalone';
 import { WindPipe } from '../pipes/wind.pipe';
 import { DayPipe } from '../pipes/day.pipe';
 import { RainPipe } from '../pipes/rain.pipe';
+import { FormsModule } from '@angular/forms'; // Add this import
 import {
   compassOutline,
   waterOutline,
@@ -72,6 +73,7 @@ import { Subscription } from 'rxjs';
     IonSpinner,
     IonChip, // Add this to your imports
     IonLabel, // Add this to your imports
+    FormsModule, // Add this to your imports
   ],
 })
 export class Tab2Page {
@@ -141,21 +143,12 @@ export class Tab2Page {
       }
     );
 
-    // Add network status monitoring
-    window.addEventListener('online', () => {
-      this.isOffline = false;
-      // Refresh data if we're back online and have coordinates
-      if (this.lat && this.lon) {
-        this.getWeatherData(this.lat, this.lon);
-      }
-    });
-
-    window.addEventListener('offline', () => {
-      this.isOffline = true;
-    });
-
     // Check initial network status
     this.isOffline = !navigator.onLine;
+
+    // Add network status monitoring
+    window.addEventListener('online', this.handleNetworkStatusChange);
+    window.addEventListener('offline', this.handleNetworkStatusChange);
   }
 
   ngOnDestroy() {
@@ -170,8 +163,34 @@ export class Tab2Page {
     }
 
     // Clean up event listeners
-    window.removeEventListener('online', () => (this.isOffline = false));
-    window.removeEventListener('offline', () => (this.isOffline = true));
+    window.removeEventListener('online', this.handleNetworkStatusChange);
+    window.removeEventListener('offline', this.handleNetworkStatusChange);
+  }
+
+  // Handle network status changes
+  private handleNetworkStatusChange = () => {
+    const wasOffline = this.isOffline;
+    this.isOffline = !navigator.onLine;
+  
+    if (wasOffline && !this.isOffline) {
+      // Just came back online - refresh data if we have a location
+      this.showToast('You are back online. Refreshing data...');
+      if (this.lat && this.lon) {
+        this.getWeatherData(this.lat, this.lon);
+      }
+    } else if (!wasOffline && this.isOffline) {
+      // Just went offline
+      this.showToast('You are offline. Search functionality is disabled.');
+    }
+  };
+
+  // Show a toast message for offline mode
+  async showOfflineWarning() {
+    if (this.isOffline) {
+      await this.showToast('This feature is disabled in offline mode.');
+      return true;
+    }
+    return false;
   }
 
   // Load data from a saved location
@@ -242,6 +261,10 @@ export class Tab2Page {
 
   // Event handler for search box.
   async handleInput(event: KeyboardEvent) {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+
     if (event.key === 'Enter') {
       const value = (event.target as HTMLInputElement).value;
       console.log('Input changed:', value);
@@ -392,6 +415,10 @@ export class Tab2Page {
 
   // Reset to the saved location
   async resetToSavedLocation() {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+
     const savedLocation = this.locationService.getLastLocation();
     
     if (savedLocation) {
