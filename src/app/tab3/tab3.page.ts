@@ -41,6 +41,7 @@ export class Tab3Page implements OnInit, OnDestroy {
   private darkModeMediaQuery: MediaQueryList | null = null;
   private darkModeChangeHandler: ((e: MediaQueryListEvent) => void) | null =
     null;
+  private locationSubscription: any; // Declare locationSubscription
 
   constructor(
     private locationService: LocationService,
@@ -68,8 +69,25 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Check if there's a saved location
-    this.savedLocation = this.locationService.getLastLocation();
+    // Check for saved location
+    const savedLocation = this.locationService.getLastLocation();
+    if (savedLocation) {
+      this.savedLocation = savedLocation;
+    }
+
+    // Subscribe to location changes
+    this.locationSubscription = this.locationService.locationChanged$.subscribe(
+      (location) => {
+        this.savedLocation = location;
+      }
+    );
+
+    // Initialize network status and add event listeners
+    this.isOffline = !navigator.onLine;
+    window.addEventListener('online', this.handleNetworkStatusChange);
+    window.addEventListener('offline', this.handleNetworkStatusChange);
+
+    // Other initialization code...
 
     // Get current temperature unit from the service
     this.temperatureUnit = this.settingsService.currentTemperatureUnit;
@@ -88,6 +106,14 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.locationSubscription) {
+      this.locationSubscription.unsubscribe();
+    }
+
+    // Remove event listeners
+    window.removeEventListener('online', this.handleNetworkStatusChange);
+    window.removeEventListener('offline', this.handleNetworkStatusChange);
+
     // Clean up event listener to prevent memory leaks
     if (this.darkModeMediaQuery && this.darkModeChangeHandler) {
       this.darkModeMediaQuery.removeEventListener(
@@ -104,15 +130,19 @@ export class Tab3Page implements OnInit, OnDestroy {
   // Handle network status changes
   private handleNetworkStatusChange = () => {
     this.isOffline = !navigator.onLine;
-    if (this.isOffline) {
-      this.showToast('You are offline. Only theme settings are available.');
-    }
   };
 
   // Show warning for disabled settings
   async showOfflineWarning() {
     if (this.isOffline) {
-      await this.showToast('This setting is disabled in offline mode.');
+      const toast = await this.toastController.create({
+        message: 'This feature is disabled in offline mode',
+        duration: 2000,
+        position: 'bottom',
+        color: 'warning',
+        cssClass: 'toast-message',
+      });
+      await toast.present();
       return true;
     }
     return false;
@@ -127,7 +157,7 @@ export class Tab3Page implements OnInit, OnDestroy {
       }, 0);
       return;
     }
-    
+
     this.temperatureUnit = event.detail.value;
     this.settingsService.setTemperatureUnit(this.temperatureUnit);
     this.showToast('Temperature unit updated');
@@ -153,7 +183,7 @@ export class Tab3Page implements OnInit, OnDestroy {
     if (await this.showOfflineWarning()) {
       return;
     }
-    
+
     this.locationService.clearLastLocation();
     this.savedLocation = null;
     this.showToast('Saved location cleared');
@@ -164,7 +194,7 @@ export class Tab3Page implements OnInit, OnDestroy {
     if (await this.showOfflineWarning()) {
       return;
     }
-    
+
     const loading = await this.loadingController.create({
       message: 'Getting your location...',
       spinner: 'bubbles',
@@ -188,14 +218,15 @@ export class Tab3Page implements OnInit, OnDestroy {
         .getReverseGeocoding(lat, lon)
         .toPromise();
 
-      if (locationData && locationData[0]) {
+      if (locationData && locationData.length > 0) {
         const name = locationData[0].name;
         this.locationService.saveLastLocation(lat, lon, name);
         this.savedLocation = { lat, lon, name };
         this.showToast('Location updated to your current position');
       } else {
-        this.locationService.saveLastLocation(lat, lon, 'Current Location');
-        this.savedLocation = { lat, lon, name: 'Current Location' };
+        const defaultName = 'Current Location';
+        this.locationService.saveLastLocation(lat, lon, defaultName);
+        this.savedLocation = { lat, lon, name: defaultName };
         this.showToast('Location updated to your current position');
       }
     } catch (error) {
@@ -217,7 +248,7 @@ export class Tab3Page implements OnInit, OnDestroy {
     if (await this.showOfflineWarning()) {
       return;
     }
-    
+
     if (!this.cityInput || this.cityInput.trim() === '') {
       const alert = await this.alertController.create({
         header: 'Empty Input',
@@ -235,18 +266,31 @@ export class Tab3Page implements OnInit, OnDestroy {
     await loading.present();
 
     try {
-      const location = await this.geocodingService
+      // Get geocoding data - returns an array of locations
+      const locations = await this.geocodingService
         .getGeocoding(this.cityInput)
         .toPromise();
 
-      if (location) {
+      if (locations && locations.length > 0) {
+        // Use the first result (most relevant)
+        const firstLocation = locations[0];
+
+        // Save the location with the correct format
+        this.locationService.saveLastLocation(
+          firstLocation.lat,
+          firstLocation.lon,
+          firstLocation.name
+        );
+
+        // Update the local state to reflect changes
         this.savedLocation = {
-          lat: location.lat,
-          lon: location.lon,
-          name: location.name,
+          lat: firstLocation.lat,
+          lon: firstLocation.lon,
+          name: firstLocation.name,
         };
+
         this.cityInput = ''; // Clear input
-        this.showToast(`Location updated to ${location.name}`);
+        this.showToast(`Location updated to ${firstLocation.name}`);
       } else {
         const alert = await this.alertController.create({
           header: 'Location Not Found',
@@ -274,7 +318,7 @@ export class Tab3Page implements OnInit, OnDestroy {
     if (await this.showOfflineWarning()) {
       return;
     }
-    
+
     // Show loading indicator
     const loading = await this.loadingController.create({
       message: 'Clearing cache...',
@@ -286,21 +330,21 @@ export class Tab3Page implements OnInit, OnDestroy {
       // Clear any localStorage cached data (except theme preference and units)
       const themePreference = localStorage.getItem('darkMode');
       const temperatureUnit = localStorage.getItem('temperatureUnit');
-      
+
       // Save the important settings
       const savedSettings = {
         darkMode: themePreference,
-        temperatureUnit: temperatureUnit
+        temperatureUnit: temperatureUnit,
       };
-      
+
       // Clear all localStorage
       localStorage.clear();
-      
+
       // Restore the important settings
       if (savedSettings.darkMode) {
         localStorage.setItem('darkMode', savedSettings.darkMode);
       }
-      
+
       if (savedSettings.temperatureUnit) {
         localStorage.setItem('temperatureUnit', savedSettings.temperatureUnit);
       }
@@ -310,10 +354,11 @@ export class Tab3Page implements OnInit, OnDestroy {
         const cacheNames = await caches.keys();
         await Promise.all(
           cacheNames
-            .filter((name) => 
-              name.includes('weather-app') || 
-              name.includes('weather-api') || 
-              name.includes('ngsw')
+            .filter(
+              (name) =>
+                name.includes('weather-app') ||
+                name.includes('weather-api') ||
+                name.includes('ngsw')
             )
             .map((name) => caches.delete(name))
         );
@@ -338,7 +383,9 @@ export class Tab3Page implements OnInit, OnDestroy {
     } catch (error) {
       // Show error message
       const toast = await this.toastController.create({
-        message: 'Failed to clear cache: ' + (error instanceof Error ? error.message : 'Unknown error'),
+        message:
+          'Failed to clear cache: ' +
+          (error instanceof Error ? error.message : 'Unknown error'),
         duration: 3000,
         position: 'bottom',
         color: 'danger',
