@@ -132,7 +132,7 @@ ion-refresher {
 }
 
 .offline-chip {
-  margin: 10px auto; /* Center horizontally with space above/below */
+  margin: 10px; /* Center horizontally with space above/below */
   display: flex;
   justify-content: center; /* Center contents */
   background-color: rgba(255, 152, 0, 0.2); /* Semi-transparent warning color */
