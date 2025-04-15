@@ -22,6 +22,7 @@ import {
   moonOutline,
   locationOutline,
   searchOutline,
+  cloudOfflineOutline, // Add this icon
 } from 'ionicons/icons';
 
 @Component({
@@ -36,6 +37,7 @@ export class Tab3Page implements OnInit, OnDestroy {
   darkMode: string = 'system'; // Default to system
   savedLocation: any = null;
   cityInput: string = '';
+  isOffline: boolean = false; // Add offline status property
   private darkModeMediaQuery: MediaQueryList | null = null;
   private darkModeChangeHandler: ((e: MediaQueryListEvent) => void) | null =
     null;
@@ -61,6 +63,7 @@ export class Tab3Page implements OnInit, OnDestroy {
       moonOutline,
       locationOutline,
       searchOutline,
+      cloudOfflineOutline, // Add icon for offline indicator
     });
   }
 
@@ -75,6 +78,13 @@ export class Tab3Page implements OnInit, OnDestroy {
     const savedTheme = localStorage.getItem('darkMode') || 'system';
     this.darkMode = savedTheme;
     this.applyTheme(this.darkMode);
+
+    // Check initial network status
+    this.isOffline = !navigator.onLine;
+
+    // Add network status monitoring
+    window.addEventListener('online', this.handleNetworkStatusChange);
+    window.addEventListener('offline', this.handleNetworkStatusChange);
   }
 
   ngOnDestroy() {
@@ -85,10 +95,39 @@ export class Tab3Page implements OnInit, OnDestroy {
         this.darkModeChangeHandler
       );
     }
+
+    // Remove network status event listeners
+    window.removeEventListener('online', this.handleNetworkStatusChange);
+    window.removeEventListener('offline', this.handleNetworkStatusChange);
+  }
+
+  // Handle network status changes
+  private handleNetworkStatusChange = () => {
+    this.isOffline = !navigator.onLine;
+    if (this.isOffline) {
+      this.showToast('You are offline. Only theme settings are available.');
+    }
+  };
+
+  // Show warning for disabled settings
+  async showOfflineWarning() {
+    if (this.isOffline) {
+      await this.showToast('This setting is disabled in offline mode.');
+      return true;
+    }
+    return false;
   }
 
   // Handle temperature unit change
-  unitChanged(event: any) {
+  async unitChanged(event: any) {
+    if (await this.showOfflineWarning()) {
+      // Reset to previous value if offline
+      setTimeout(() => {
+        this.temperatureUnit = this.settingsService.currentTemperatureUnit;
+      }, 0);
+      return;
+    }
+    
     this.temperatureUnit = event.detail.value;
     this.settingsService.setTemperatureUnit(this.temperatureUnit);
     this.showToast('Temperature unit updated');
@@ -110,7 +149,11 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   // Delete saved location
-  clearSavedLocation() {
+  async clearSavedLocation() {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+    
     this.locationService.clearLastLocation();
     this.savedLocation = null;
     this.showToast('Saved location cleared');
@@ -118,6 +161,10 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   // Get current location and save it
   async useCurrentLocation() {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+    
     const loading = await this.loadingController.create({
       message: 'Getting your location...',
       spinner: 'bubbles',
@@ -167,30 +214,32 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   // Change location by city name
   async changeLocation() {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+    
     if (!this.cityInput || this.cityInput.trim() === '') {
-      this.showToast('Please enter a city name');
+      const alert = await this.alertController.create({
+        header: 'Empty Input',
+        message: 'Please enter a city name',
+        buttons: ['OK'],
+      });
+      await alert.present();
       return;
     }
 
     const loading = await this.loadingController.create({
-      message: 'Searching for location...',
+      message: 'Searching location...',
       spinner: 'bubbles',
     });
     await loading.present();
 
     try {
-      const results = await this.geocodingService
+      const location = await this.geocodingService
         .getGeocoding(this.cityInput)
         .toPromise();
 
-      if (results && results.length > 0) {
-        const location = results[0];
-        // Save to LocationService which other components will read from
-        this.locationService.saveLastLocation(
-          location.lat,
-          location.lon,
-          location.name
-        );
+      if (location) {
         this.savedLocation = {
           lat: location.lat,
           lon: location.lon,
@@ -222,6 +271,10 @@ export class Tab3Page implements OnInit, OnDestroy {
 
   // Clear cache
   async clearCache() {
+    if (await this.showOfflineWarning()) {
+      return;
+    }
+    
     // Show loading indicator
     const loading = await this.loadingController.create({
       message: 'Clearing cache...',
@@ -247,6 +300,7 @@ export class Tab3Page implements OnInit, OnDestroy {
       if (savedSettings.darkMode) {
         localStorage.setItem('darkMode', savedSettings.darkMode);
       }
+      
       if (savedSettings.temperatureUnit) {
         localStorage.setItem('temperatureUnit', savedSettings.temperatureUnit);
       }

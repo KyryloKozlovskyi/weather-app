@@ -11,13 +11,20 @@
     </ion-toolbar>
   </ion-header>
 
+  <!-- Offline indicator -->
+  <ion-chip *ngIf="isOffline" color="warning" class="offline-chip">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    <ion-label>Offline Mode - Only Theme Settings Available</ion-label>
+  </ion-chip>
+
   <div class="settings-container">
     <!-- Units Section -->
-    <ion-card>
+    <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="thermometer-outline"></ion-icon>
           Temperature Units
+          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -26,6 +33,7 @@
             <ion-segment
               [(ngModel)]="temperatureUnit"
               (ionChange)="unitChanged($event)"
+              [disabled]="isOffline"
             >
               <ion-segment-button value="metric">
                 <ion-label>°C</ion-label>
@@ -39,7 +47,7 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- Theme Section -->
+    <!-- Theme Section - Always enabled -->
     <ion-card>
       <ion-card-header>
         <ion-card-title>
@@ -74,11 +82,12 @@
     </ion-card>
 
     <!-- Saved Location Section -->
-    <ion-card>
+    <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="location-outline"></ion-icon>
           Saved Location
+          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
@@ -95,14 +104,15 @@
               [(ngModel)]="cityInput"
               label="Change Location"
               label-placement="floating"
+              [disabled]="isOffline"
             ></ion-input>
-            <ion-button slot="end" (click)="changeLocation()">
+            <ion-button slot="end" (click)="changeLocation()" [disabled]="isOffline">
               <ion-icon name="search-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
           <div class="button-container">
-            <ion-button expand="block" (click)="useCurrentLocation()">
+            <ion-button expand="block" (click)="useCurrentLocation()" [disabled]="isOffline">
               <ion-icon slot="start" name="location-outline"></ion-icon>
               Use Current Location
             </ion-button>
@@ -110,6 +120,7 @@
               expand="block"
               color="danger"
               (click)="clearSavedLocation()"
+              [disabled]="isOffline"
             >
               <ion-icon slot="start" name="trash-outline"></ion-icon>
               Clear Saved Location
@@ -127,13 +138,14 @@
               [(ngModel)]="cityInput"
               label="Set Location"
               label-placement="floating"
+              [disabled]="isOffline"
             ></ion-input>
-            <ion-button slot="end" (click)="changeLocation()">
+            <ion-button slot="end" (click)="changeLocation()" [disabled]="isOffline">
               <ion-icon name="search-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
-          <ion-button expand="block" (click)="useCurrentLocation()">
+          <ion-button expand="block" (click)="useCurrentLocation()" [disabled]="isOffline">
             <ion-icon slot="start" name="location-outline"></ion-icon>
             Use Current Location
           </ion-button>
@@ -142,16 +154,17 @@
     </ion-card>
 
     <!-- Cache Management Section -->
-    <ion-card>
+    <ion-card [class.disabled-card]="isOffline">
       <ion-card-header>
         <ion-card-title>
           <ion-icon name="refresh-outline"></ion-icon>
           Cache Management
+          <ion-icon *ngIf="isOffline" name="lock-closed-outline" size="small" color="medium"></ion-icon>
         </ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <p>Clear cached weather data to fetch fresh information.</p>
-        <ion-button expand="block" color="warning" (click)="clearCache()">
+        <ion-button expand="block" color="warning" (click)="clearCache()" [disabled]="isOffline">
           <ion-icon slot="start" name="trash-outline"></ion-icon>
           Clear App Cache
         </ion-button>
